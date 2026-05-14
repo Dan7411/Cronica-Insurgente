@@ -1,6 +1,8 @@
 import time
 time.sleep(2)
 
+import random
+
 
 print("CRÔNICA INSURGENTE")
 
@@ -14,16 +16,8 @@ print("Espírito do Trancendente")
 
 print("#Rebelião à Dinvidade: HP = 90")
 print("Ataques")
-print("Expurgo: 40 de dano")
-print("Rebelião : 40 de dano")
-
-print("Espírito do Imortal")
-
-print("#Distorção: HP = 95")
-print("Ataques")
-print("Irreal: 35")
-print("Quebra: 30 de dano")
-#
+print("Expurgo: 30 de dano")
+print("Rebelião : 10 de dano")
 #print("#Ascenção: HP = 100")
 #print("Expansão: 50 de dano")
 #print("Romper: 25 de dano")
@@ -32,11 +26,114 @@ print("Quebra: 30 de dano")
 #print("Proteger: anula o ataque adversária, podendo ser usado uma vez")
 #print("Morte: 60 de dano")
 
-rebeliao = int(90)
+hp = 90
 
-expurgo = int(20)
-rebelião = int(20)
+espurgo = 20
+rebeliao = 10
 
-distorcao = int (95)
-quebra = int(20)
-irreal = int(20)
+vida_inimigo = 95
+quebra = 20
+
+
+expurgo = 1
+rebelião = 2
+
+turno = 0
+
+
+print("A batalha começou!")
+
+selecao = True
+
+while selecao == True:
+    
+    
+    adversario = random.randint(3,4)
+    irreal_hits = random.randint(1,3)
+    
+    turno += 1
+    print(f"Turno {turno}")
+    print("Rebelião à Divindade vs Ascenção")
+    
+    print("Qual ataque irá usar?")
+    print("expurgo ou rebelião")
+    ataque = int(input("Selecione o ataque:"))
+
+    #if hp <= 0:
+    #    selecao = False
+    
+
+       
+    
+
+    if ataque == 1:
+        print("Rebelião à Divindade usou expurgo e causou 20 de dano ao adversário")
+        print(f"Ascenção está com {vida_inimigo - espurgo} de hp")
+   
+        vida_inimigo -= espurgo
+
+    if adversario == 3:
+            print(f"Ascenção usou quebra e causou {quebra} de dano")
+            print(f"Rebelião à Divindade está com {hp - quebra}")
+            hp -= quebra
+    elif adversario == 4:
+   
+            if irreal_hits == 1:
+             dano = 5
+             print(f"Ascenção usou irreal e causou {dano} de dano")
+             print(f"Rebelião à Divindade está com {hp - dano} de hp" )
+             hp -= dano
+  
+            elif irreal_hits == 2:
+             dano = 10
+             print(f"Ascenção usou irreal e causou {dano} de dano")
+             print(f"Rebelião à Divindade está com {hp - dano} de hp" )
+             hp -= dano
+
+            elif irreal_hits == 3:
+             dano = 15
+             print(f"Ascenção usou irreal e causou {dano} de dano")
+             print(f"Rebelião à Divindade está com {hp - dano} de hp" )
+             hp -= dano
+
+    elif ataque == 2:                    
+           print("Rebelião à Divindade usou rebelião e causou 10 de dano ao adversário")
+           print("Ascenção foi marcado por rebelião")
+           print("Até o fim da batalha ele levará 10 de dano por turno")
+           print(f"Ascenção está com {vida_inimigo - rebeliao} de hp")
+           vida_inimigo -= rebeliao
+
+           if adversario == 3:
+             print(f"Ascenção usou quebra e causou {quebra} de dano")
+             print(f"Rebelião à Divindade está com {hp - quebra} de hp")
+             hp -= quebra
+
+           elif irreal_hits == 1:
+             dano = 5
+             print(f"Ascenção usou irreal e causou {dano} de dano")
+             print(f"Rebelião à Divindade está com {hp - dano} de hp" )
+             hp -= dano
+
+           elif irreal_hits == 2:
+             dano = 10
+             print(f"Ascenção usou irreal e causou {dano} de dano")
+             print(f"Rebelião à Divindade está com {hp - dano} de hp" )
+             hp -= dano
+
+           elif irreal_hits == 3:
+             dano = 15
+             print(f"Ascenção usou irreal e causou {dano} de dano")
+             print(f"Rebelião à Divindade está com {hp - dano} de hp" )
+             hp -= dano
+
+    if vida_inimigo <= 0 and hp > 0:
+        print("Parabéns, Rebelião à Divindade venceu!")
+        selecao = False
+    else:
+        print("Que pena! Ascenção venceu")
+            
+
+
+
+
+
