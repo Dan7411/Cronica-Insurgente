@@ -1,8 +1,10 @@
 import time
 time.sleep(2)
 
+import random
 
-print("CRÔNICA INSURGENTE")
+
+print("---------[CRÔNICA INSURGENTE]---------")
 
 print("Bem vindo viajante")
 print("Nesse projeto, você jogará como o transcedente")
@@ -14,16 +16,8 @@ print("Espírito do Trancendente")
 
 print("#Rebelião à Dinvidade: HP = 90")
 print("Ataques")
-print("Expurgo: 40 de dano")
-print("Rebelião : 40 de dano")
-
-print("Espírito do Imortal")
-
-print("#Distorção: HP = 95")
-print("Ataques")
-print("Irreal: 40")
-print("Quebra: 40 de dano")
-#
+print("Expurgo: 20 de dano")
+print("Rebelião : 10 de dano")
 #print("#Ascenção: HP = 100")
 #print("Expansão: 50 de dano")
 #print("Romper: 25 de dano")
@@ -32,132 +26,126 @@ print("Quebra: 40 de dano")
 #print("Proteger: anula o ataque adversária, podendo ser usado uma vez")
 #print("Morte: 60 de dano")
 
-rebeliao = int(90)
+jogavel = {
+  "nome : Rebelião à Divindade"
+  "hp" : 90 ,
+  "expurgo" : 20 ,
+  "rebeliao" : 10 ,
+  "marcado" : 0
+  }
 
-expurgo = int(20)
-rebelião = int(20)
 
-distorcao = int (95)
-quebra = int(20)
-irreal = int(20)
 
-#ascencao = int(100)
-#expansao = int(50)
-#romper = int(25)
+vida_inimigo = 95
+#quebra = 20
 
-#vida = int(90)
-#protect = int(-90)
-#morte = int(60)
-
-# opcao 1
-Hpr = rebeliao - quebra
-hpd = distorcao - expurgo
-
-# opcao 2
-#h#pr = rebeliao - expansao
-#hpa = ascencao - rebelião
-
-# opcao 3
-#hpr1 = rebeliao - morte
-#h3pv = vida - expurgo
-
-#print("1 é distorção, 2 é ascenção e 3 é vida")
-
-##pcao2 = 2
-#opcao3 = 3
-
-hpr1 = rebeliao - expurgo
-hpd1 = distorcao - expurgo
-
-hpr2 = hpr1 - expurgo
-hpd2 = hpd1 - expurgo
-
-hpr3 = hpr2 - expurgo
-hpd3 = hpd2 - expurgo
-
-hpr4 = hpr3 - expurgo
-hpd4 = hpd3 - expurgo
-
-hpr5 = hpr4 - expurgo
-hpd5 = hpd4 - expurgo
 
 
 ataque1 = 1
 ataque2 = 2
- 
-print("1 é o expugo, e 2 é rebelião")
-#opcao = int(input("Digite qual espírito o Imortal irá usar "))
-print("Distorção(95)")
-print("Rebelião à Divindade(90)")
 
-#match opcao:
-#    case 1:
+turno = 0
 
-venceu = False
 
-while venceu == False:
-    ataque = int(input("qual ataque irá usar: "))
-    print("Rebelião à Divindade usou expurgo contra Distorção")
-    print("Distorção usou quebra contra Rebelião à Divindade")
-    print(f"Rebelião à Divindade ficou com {hpr1} de HP")
-    print(f"Distorção ficou com {hpd1}")
+print("A batalha começou!")
+
+selecao = True
+
+while selecao == True:
     
-    if rebeliao <= 0:
-        print("Você venceu")
-        venceu = True   
-    else:
-        print("A batalha continua")          
+    vida_inimigo = 95
+    adversario = random.randint(3,4)
+    dano_adversario = random.randint(5,6)
     
-    ataque = int(input("qual ataque irá usar: "))
-    print("Rebelião à Divindade usou expurgo contra Distorção")
-    print("Distorção usou quebra contra Rebelião à Divindade")
-    print(f"Rebelião à Divindade ficou com {hpr2} de HP")
-    print(f"Distorção ficou com {hpd3}")
+    
+    turno += 1
+    print(f"----------TURNO{turno}---------- ")
+    print("Rebelião à Divindade vs Ascenção")
+    
+    print("Qual ataque irá usar?")
+    print("expurgo ou rebelião")
+    ataque = int(input("Selecione o ataque:"))
 
-    if  <= 0:
-        print("Você venceu")
-        venceu = True   
-    else:
-        print("A batalha continua")      
-   
-    ataque = int(input("qual ataque irá usar: "))
-    print("Rebelião à Divindade usou expurgo contra Distorção")
-    print("Distorção usou quebra contra Rebelião à Divindade")
-    print(f"Rebelião à Divindade ficou com {} de HP")
-    print(f"Distorção ficou com {derrota - expurgo - expurgo}")
+    #if hp <= 0:
+    #    selecao = False
+    
 
-    if divino = 0:
-        print("Você venceu")
-        venceu = True   
-    else:
-        print("A batalha continua") 
-   
-   
+       
+    
+
+    if ataque == 1:
+        print("Rebelião à Divindade usou expurgo e causou 20 de dano ao adversário")
+        print(f"Ascenção está com {vida_inimigo - jogavel["expurgo"]} de hp") 
+        vida_inimigo -= expurgo
+    elif ataque == 2:                    
+         print("Rebelião à Divindade usou rebelião e causou 10 de dano ao adversário")
+         print(f"Ascenção está com {vida_inimigo - rebeliao} de hp")
+         vida_inimigo -= rebeliao
+
+    if adversario == 3 and dano_adversario == 5:
+          quebra = 10
+          print(f"Ascenção usou quebra e causou {quebra} de dano")
+          print(f"Rebelião à Divindade está com {hp - quebra}")
+          hp -= quebra
+    elif adversario == 3 and dano_adversario == 6:
+        quebra = 25
+        print(f"Ascenção usou quebra e causou {quebra} de dano")
+        print(f"Rebelião à Divindade está com {hp - quebra}")
+        hp -= quebra  
+    
+    elif adversario == 4:
+     for dano in range(1,5):
+         dano = 5
+         print(f"irreal causou {dano} de dano")
+         print(f"Rebelião à Divindade está com {hp - dano} de hp")
+         hp -= dano
 
 
 
- #case 2:
-    #    print("Rebelião à Divindade usou rebelião contra Ascenção")
-    #    print("Ascenção usou expansão contra Rebelião à Divindade")
-    #    print(f"Rebelião á Divindade ficou com {rebeliao - expansao}")
-    #    if hpr > hpa:
-    #        print("Rebelião à Divindade venceu")
-    #        print("Ascenção perdeu")
-    #    else:
-    #        print("Ascenção venceu")
-    #        print("Rebelião à divindade perdeu")
-    #    
-    #case 3:
-    #    print("Rebelião à Divindade usou expurgo contra Vida")
-    #    print("Vida usou morte contra Rebelião à Divindade")
-    #    print(f"Rebelião à Divindade ficou com {rebeliao - morte} de HP")
-    #    print(f"Vida ficou com {vida - expurgo}")
-    #    if hpr1 > hpv:
-    #        print("Rebelião à Divindade venceu")
-    #        print("Vida perdeu")
-    #    else:
-    #        print("Vida venceu")
-    #        print("Rebelião à divindade perdeu")
-#
-    #        
-#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
