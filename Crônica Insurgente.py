@@ -49,14 +49,20 @@ turno = 0
 
 print("A batalha começou!")
 
+hp = 95
+vida_inimigo = 95
 selecao = True
 
 while selecao == True:
     
-    vida_inimigo = 95
-    adversario = random.randint(3,4)
-    dano_adversario = random.randint(5,6)
     
+    adversario = random.choice([1,2,3,4])
+    at = {
+    "um" : "10",
+    "dois" : "20",
+    "tres" : "30",
+    "quatro" : "40"    
+    }
     
     turno += 1
     print(f"----------TURNO{turno}---------- ")
@@ -76,30 +82,48 @@ while selecao == True:
     if ataque == 1:
         print("Rebelião à Divindade usou expurgo e causou 20 de dano ao adversário")
         print(f"Ascenção está com {vida_inimigo - jogavel["expurgo"]} de hp") 
-        vida_inimigo -= expurgo
+        vida_inimigo -= 20
+    
     elif ataque == 2:                    
          print("Rebelião à Divindade usou rebelião e causou 10 de dano ao adversário")
-         print(f"Ascenção está com {vida_inimigo - rebeliao} de hp")
-         vida_inimigo -= rebeliao
+         print(f"Ascenção está com {vida_inimigo - jogavel["rebeliao"]} de hp")
+         vida_inimigo -= 10
 
-    if adversario == 3 and dano_adversario == 5:
-          quebra = 10
-          print(f"Ascenção usou quebra e causou {quebra} de dano")
-          print(f"Rebelião à Divindade está com {hp - quebra}")
-          hp -= quebra
-    elif adversario == 3 and dano_adversario == 6:
-        quebra = 25
-        print(f"Ascenção usou quebra e causou {quebra} de dano")
-        print(f"Rebelião à Divindade está com {hp - quebra}")
-        hp -= quebra  
+    elif adversario == 1:
+          print(f"Ascenção usou quebra e causou {at["um"]} de dano")
+          print(f"Rebelião à Divindade está com {hp - at["um"]}")
+          hp -= 10
     
+    elif adversario == 2:
+          print(f"Ascenção usou quebra e causou {at["dois"]} de dano")
+          print(f"Rebelião à Divindade está com {hp - at["dois"]}")
+          hp -= 20
+    
+    elif adversario == 3:
+          print(f"Ascenção usou quebra e causou {at["tres"]} de dano")
+          print(f"Rebelião à Divindade está com {hp - at["tres"]}")
+          hp -= 30
+
     elif adversario == 4:
-     for dano in range(1,5):
+          print(f"Ascenção usou quebra e causou {at["quatro"]} de dano")
+          print(f"Rebelião à Divindade está com {hp - at["quatro"]}")
+          hp -= 40
+
+    elif adversario == 1:
+       for dano in range(1,5):
          dano = 5
          print(f"irreal causou {dano} de dano")
          print(f"Rebelião à Divindade está com {hp - dano} de hp")
          hp -= dano
 
+
+    elif hp <= 0:
+        print("Que pena! Ascenção venceu")
+        break
+    elif vida_inimigo <= 0:
+        print(f"Ascenção está com 0 de hp")
+        print("Parabéns, Rebelião à Divindade venceu!")
+        break
 
 
 
