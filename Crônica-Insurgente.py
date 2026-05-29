@@ -1,34 +1,26 @@
 import random
 import time
 
-time.sleep(2)
-
 # ==========================================
 #              APRESENTAÇÃO
 # ==========================================
 
 print("======== CRÔNICA INSURGENTE ========")
 
-time.sleep(2)
+time.sleep(1)
 
 print("\nBem-vindo, viajante.")
-
-time.sleep(2)
 
 print("""
 Neste jogo, você controlará um mestre espiritual
 em batalhas por turnos contra entidades poderosas.
 
-Use ataques estratégicos para derrotar seus inimigos
-antes que sua vida chegue a zero.
+Use ataques e poções para sobreviver
+até derrotar seu inimigo.
 """)
 
-time.sleep(2)
-
-print("Prepare-se para a batalha...\n")
-
 # ==========================================
-#        DICIONÁRIOS DE ENTIDADES
+#        DICIONÁRIOS DOS PERSONAGENS
 # ==========================================
 
 jogador = {
@@ -38,7 +30,7 @@ jogador = {
     "vida_atual": 90,
     "vida_maxima": 90,
 
-    "pocoes": 3,
+    "pocoes": 2,
 
     "ataques": (
         "Expurgo",
@@ -67,19 +59,17 @@ inimigo = {
 
 ataques = {
 
-    # MULTI DANO
+    # ataque de vários golpes
     "Expurgo": {
 
         "tipo": "multi_dano",
 
         "golpes": 3,
 
-        "dano": 5,
-
-        "descricao": "Uma sequência de ataques espirituais."
+        "dano": 5
     },
 
-    # DANO PERSISTENTE
+    # ataque com dano persistente
     "Rebelião": {
 
         "tipo": "dano_persistente",
@@ -88,27 +78,22 @@ ataques = {
 
         "persistente": 5,
 
-        "duracao": 3,
-
-        "descricao": "Marca o inimigo com energia destrutiva."
+        "duracao": 3
     },
 
+    # ataques do inimigo
     "Quebra": {
 
         "tipo": "normal",
 
-        "dano": 25,
-
-        "descricao": "Um ataque brutal."
+        "dano": 25
     },
 
     "Irreal": {
 
         "tipo": "normal",
 
-        "dano": 15,
-
-        "descricao": "Ataques ilusórios."
+        "dano": 15
     }
 }
 
@@ -126,40 +111,29 @@ pocoes = {
     "Poção Média": {
 
         "cura": 40
-    },
-
-    "Poção Suprema": {
-
-        "cura": 999
     }
 }
 
 # ==========================================
-#          STATUS INICIAL
+#        STATUS INICIAL DA BATALHA
 # ==========================================
 
-print("\n========== STATUS DA BATALHA ==========")
+print("\n========== STATUS ==========")
 
-print(f"\nPersonagem: {jogador['nome']}")
 print(
-    f"Vida: "
-    f"{jogador['vida_atual']}/"
-    f"{jogador['vida_maxima']}"
+    f"\n{jogador['nome']} -> "
+    f"{jogador['vida_atual']} HP"
 )
 
-print("\n------------------------------")
-
-print(f"\nInimigo: {inimigo['nome']}")
 print(
-    f"Vida: "
-    f"{inimigo['vida_atual']}/"
-    f"{inimigo['vida_maxima']}"
+    f"{inimigo['nome']} -> "
+    f"{inimigo['vida_atual']} HP"
 )
 
-print("\n=======================================\n")
+print("\n============================")
 
 # ==========================================
-#         INÍCIO DO COMBATE
+#        QUEM COMEÇA PRIMEIRO
 # ==========================================
 
 primeiro_turno = random.choice([
@@ -167,9 +141,17 @@ primeiro_turno = random.choice([
     inimigo["nome"]
 ])
 
-print("A batalha começou!\n")
+print(f"\n⚔ {primeiro_turno} atacará primeiro!")
 
-print(f"⚔ {primeiro_turno} irá atacar primeiro!\n")
+# variável do efeito persistente
+efeito_persistente = {
+
+    "ativo": False,
+
+    "dano": 0,
+
+    "duracao": 0
+}
 
 turno = 0
 
@@ -177,6 +159,7 @@ turno = 0
 #             LAÇO PRINCIPAL
 # ==========================================
 
+# continua enquanto os dois estiverem vivos
 while (
     jogador["vida_atual"] > 0
     and inimigo["vida_atual"] > 0
@@ -186,16 +169,6 @@ while (
 
     print(f"\n========== TURNO {turno} ==========")
 
-    print(
-        f"\n{jogador['nome']}: "
-        f"{jogador['vida_atual']} HP"
-    )
-
-    print(
-        f"{inimigo['nome']}: "
-        f"{inimigo['vida_atual']} HP"
-    )
-
     # ==========================================
     #           TURNO DO JOGADOR
     # ==========================================
@@ -204,7 +177,7 @@ while (
     print("1 - Atacar")
     print("2 - Usar Poção")
 
-    acao = int(input("Escolha uma opção: "))
+    acao = int(input("\nEscolha: "))
 
     # ==========================================
     #                ATACAR
@@ -214,28 +187,32 @@ while (
 
         print("\nEscolha um ataque:")
 
-        for indice, ataque_nome in enumerate(
+        # mostra os ataques do jogador
+        for indice, ataque in enumerate(
             jogador["ataques"],
             start=1
         ):
 
-            print(f"{indice} - {ataque_nome}")
+            print(f"{indice} - {ataque}")
 
         escolha_ataque = int(
-            input("\nDigite o número do ataque: ")
+            input("\nDigite o número: ")
         )
 
+        # verifica se escolheu um ataque válido
         if (
             1 <= escolha_ataque
             <= len(jogador["ataques"])
         ):
 
+            # pega o nome do ataque
             ataque_escolhido = (
                 jogador["ataques"][
                     escolha_ataque - 1
                 ]
             )
 
+            # pega os dados do ataque
             dados_ataque = (
                 ataques[ataque_escolhido]
             )
@@ -256,6 +233,7 @@ while (
 
                 dano_total = 0
 
+                # repete os golpes
                 for golpe in range(
                     dados_ataque["golpes"]
                 ):
@@ -265,12 +243,20 @@ while (
                     )
 
                     print(
-                        f"Golpe {golpe + 1} causou "
+                        f"Golpe {golpe + 1} "
+                        f"causou "
                         f"{dados_ataque['dano']} "
                         f"de dano!"
                     )
 
-                dano = dano_total
+                inimigo["vida_atual"] -= (
+                    dano_total
+                )
+
+                print(
+                    f"\nDano total: "
+                    f"{dano_total}"
+                )
 
             # ==========================================
             #         DANO PERSISTENTE
@@ -283,6 +269,13 @@ while (
 
                 dano = dados_ataque["dano"]
 
+                inimigo["vida_atual"] -= dano
+
+                print(
+                    f"Causou {dano} de dano!"
+                )
+
+                # ativa efeito persistente
                 efeito_persistente = {
 
                     "ativo": True,
@@ -301,18 +294,18 @@ while (
                 }
 
             # ==========================================
-            #             DANO NORMAL
+            #              DANO NORMAL
             # ==========================================
 
             else:
 
                 dano = dados_ataque["dano"]
 
-            inimigo["vida_atual"] -= dano
+                inimigo["vida_atual"] -= dano
 
-            print(
-                f"\nCausou {dano} de dano!"
-            )
+                print(
+                    f"Causou {dano} de dano!"
+                )
 
         else:
 
@@ -324,6 +317,7 @@ while (
 
     elif acao == 2:
 
+        # verifica se possui poções
         if jogador["pocoes"] > 0:
 
             print("\nPoções disponíveis:")
@@ -333,17 +327,16 @@ while (
             ):
 
                 print(
-                    f"- {nome_pocao} | "
-                    f"Cura: {dados['cura']}"
+                    f"- {nome_pocao} "
+                    f"(cura {dados['cura']})"
                 )
 
             escolha_pocao = input(
                 "\nDigite o nome da poção: "
             )
 
+            # verifica se a poção existe
             if escolha_pocao in pocoes:
-
-                jogador["pocoes"] -= 1
 
                 cura = (
                     pocoes[
@@ -355,8 +348,10 @@ while (
                     jogador["vida_atual"]
                 )
 
+                # usa a poção
                 jogador["vida_atual"] += cura
 
+                # impede ultrapassar vida máxima
                 if (
                     jogador["vida_atual"]
                     > jogador["vida_maxima"]
@@ -366,6 +361,10 @@ while (
                         jogador["vida_maxima"]
                     )
 
+                # remove uma poção
+                jogador["pocoes"] -= 1
+
+                # calcula quanto curou
                 cura_real = (
                     jogador["vida_atual"]
                     - vida_antes
@@ -386,8 +385,6 @@ while (
                     f"{jogador['pocoes']}"
                 )
 
-                continue
-
             else:
 
                 print("\nPoção inválida!")
@@ -395,23 +392,18 @@ while (
         else:
 
             print(
-                "\nVocê não possui "
-                "poções disponíveis!"
+                "\nVocê não possui poções!"
             )
 
     else:
 
         print("\nOpção inválida!")
-        continue
 
     # ==========================================
-    #        DANO PERSISTENTE
+    #        EFEITO PERSISTENTE
     # ==========================================
 
-    if (
-        "efeito_persistente" in locals()
-        and efeito_persistente["ativo"]
-    ):
+    if efeito_persistente["ativo"]:
 
         inimigo["vida_atual"] -= (
             efeito_persistente["dano"]
@@ -426,6 +418,7 @@ while (
 
         efeito_persistente["duracao"] -= 1
 
+        # encerra efeito
         if (
             efeito_persistente["duracao"]
             <= 0
@@ -437,16 +430,12 @@ while (
                 "\nO efeito persistente terminou."
             )
 
-    # ==========================================
-    #          VERIFICA VITÓRIA
-    # ==========================================
-
+    # verifica derrota do inimigo
     if inimigo["vida_atual"] <= 0:
-
         break
 
     # ==========================================
-    #          TURNO DO INIMIGO
+    #           TURNO DO INIMIGO
     # ==========================================
 
     print(
@@ -455,22 +444,24 @@ while (
     )
 
     # ==========================================
-    #      INTELIGÊNCIA DO INIMIGO
+    #      IA DE CURA DO INIMIGO
     # ==========================================
 
     vida_limite = (
         inimigo["vida_maxima"] * 0.30
     )
 
+    # verifica se vida está abaixo de 30%
     if (
         inimigo["vida_atual"]
         <= vida_limite
         and inimigo["pocoes"] > 0
     ):
 
-        teste_cura = random.randint(1, 10)
+        # 10% de chance de usar poção
+        teste = random.randint(1, 10)
 
-        if teste_cura == 1:
+        if teste == 1:
 
             nome_pocao = random.choice(
                 list(pocoes.keys())
@@ -486,6 +477,7 @@ while (
 
             inimigo["vida_atual"] += cura
 
+            # impede ultrapassar vida máxima
             if (
                 inimigo["vida_atual"]
                 > inimigo["vida_maxima"]
@@ -495,12 +487,13 @@ while (
                     inimigo["vida_maxima"]
                 )
 
+            # remove uma poção
+            inimigo["pocoes"] -= 1
+
             cura_real = (
                 inimigo["vida_atual"]
                 - vida_antes
             )
-
-            inimigo["pocoes"] -= 1
 
             print(
                 f"\n🧪 {inimigo['nome']} usou "
@@ -508,14 +501,15 @@ while (
             )
 
             print(
-                f"{inimigo['nome']} recuperou "
+                f"Recuperou "
                 f"{cura_real} de vida!"
             )
 
+            # termina turno do inimigo
             continue
 
     # ==========================================
-    #          ATAQUE DO INIMIGO
+    #         ATAQUE DO INIMIGO
     # ==========================================
 
     ataque_inimigo = random.choice(
@@ -526,33 +520,7 @@ while (
         ataque_inimigo
     ]
 
-    if (
-        dados_ataque["tipo"]
-        == "multi_dano"
-    ):
-
-        dano_total = 0
-
-        for golpe in range(
-            dados_ataque["golpes"]
-        ):
-
-            dano_total += (
-                dados_ataque["dano"]
-            )
-
-        dano = dano_total
-
-    elif (
-        dados_ataque["tipo"]
-        == "dano_persistente"
-    ):
-
-        dano = dados_ataque["dano"]
-
-    else:
-
-        dano = dados_ataque["dano"]
+    dano = dados_ataque["dano"]
 
     jogador["vida_atual"] -= dano
 
@@ -562,41 +530,54 @@ while (
     )
 
     print(
-        f"{jogador['nome']} recebeu "
-        f"{dano} de dano!"
+        f"{jogador['nome']} perdeu "
+        f"{dano} de vida!"
+    )
+
+    # ==========================================
+    #        STATUS ATUALIZADO
+    # ==========================================
+
+    print("\n========== STATUS ==========")
+
+    print(
+        f"\n{jogador['nome']} -> "
+        f"{jogador['vida_atual']} HP"
     )
 
     print(
-        f"Vida atual de "
-        f"{jogador['nome']}: "
-        f"{jogador['vida_atual']}/"
-        f"{jogador['vida_maxima']}"
+        f"{inimigo['nome']} -> "
+        f"{inimigo['vida_atual']} HP"
     )
 
+    print("\n============================")
+
 # ==========================================
-#           RESULTADO FINAL
+#              FIM DE JOGO
 # ==========================================
 
+print("\n========== FIM DA BATALHA ==========")
+
+# jogador derrotado
 if jogador["vida_atual"] <= 0:
 
     print(
-        f"\n☠ {jogador['nome']} "
-        f"foi derrotado!"
+        f"\n☠ {jogador['nome']} foi derrotado!"
     )
 
     print(
-        f"🏆 {inimigo['nome']} "
-        f"venceu a batalha!"
+        f"🏆 {inimigo['nome']} venceu!"
     )
 
-else:
-
-    print(
-        f"\n☠ {inimigo['nome']} "
-        f"foi derrotado!"
-    )
+# inimigo derrotado
+elif inimigo["vida_atual"] <= 0:
 
     print(
-        f"🏆 {jogador['nome']} "
-        f"venceu a batalha!"
+        f"\n☠ {inimigo['nome']} foi derrotado!"
     )
+
+    print(
+        f"🏆 {jogador['nome']} venceu!"
+    )
+
+print("\n====================================")
