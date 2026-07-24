@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Crônica Insurgente</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<!-- ============================= -->
+<!-- MENU INICIAL -->
+<!-- ============================= -->
+
+<section id="menu" class="tela">
+
+    <h1>⚔ CRÔNICA INSURGENTE ⚔</h1>
+
+    <p>
+        O destino do mundo será decidido.
+    </p>
+
+    <button onclick="mostrarHistoria()">
+        📜 Ver introdução e sinopse
+    </button>
+
+    <button onclick="mostrarSinopse()">
+        📖 Ver apenas sinopse
+    </button>
+
+    <button onclick="iniciarBatalha()">
+        ⚔ Ir direto para a batalha
+    </button>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- HISTÓRIA -->
+<!-- ============================= -->
+
+<section id="historia" class="tela escondido">
+
+    <div id="textoHistoria"></div>
+
+    <button onclick="iniciarBatalha()">
+        ⚔ Começar batalha
+    </button>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- BATALHA -->
+<!-- ============================= -->
+
+<section id="jogo" class="escondido">
+
+
+<h1>⚔ CRÔNICA INSURGENTE ⚔</h1>
+
+
+<!-- STATUS -->
+
+<div class="status">
+
+
+<div class="personagem">
+
+<h2>
+⚔ Insurgente Divino
+</h2>
+
+<div class="barra">
+
+<div id="barraJogador"></div>
+
+</div>
+
+<p id="vidaJogador"></p>
+
+<p id="pocoesJogador"></p>
+
+</div>
+
+
+
+<div class="personagem">
+
+<h2>
+🌑 Nêmesis Primordial
+</h2>
+
+
+<div class="barra">
+
+<div id="barraInimigo"></div>
+
+</div>
+
+
+<p id="vidaInimigo"></p>
+
+<p id="pocoesInimigo"></p>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- ÁREA PRINCIPAL -->
+
+<div class="batalha">
+
+
+<!-- AÇÕES -->
+
+<div class="acoes">
+
+<h2>
+⚔ Ações
+</h2>
+
+
+<button onclick="usarAtaque('ruina')">
+
+⚔ Ruína Celestial (10)
+
+</button>
+
+
+<p>
+Um golpe rápido e preciso.
+</p>
+
+
+
+<button onclick="usarAtaque('julgamento')">
+
+🔥 Julgamento da Rebelião (16)
+
+</button>
+
+
+<p>
+Aplica queimadura por 3 turnos.
+</p>
+
+
+
+<button onclick="defender()">
+
+🛡 Defender
+
+</button>
+
+
+
+<button onclick="usarPocao()">
+
+🧪 Usar Poção
+
+</button>
+
+
+
+<button onclick="fugir()">
+
+🏃 Fugir
+
+</button>
+
+
+</div>
+
+
+
+<!-- TERMINAL -->
+
+<div class="terminal">
+
+<h2>
+📜 Batalha
+</h2>
+
+
+<div id="mensagens">
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
