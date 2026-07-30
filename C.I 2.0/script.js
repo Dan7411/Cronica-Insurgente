@@ -10,7 +10,7 @@
 
 const jogador = {
 
-    nome: "Insurgente Divino",
+    nome: "Arauto da Rebelião",
 
     vidaMaxima: 130,
 
