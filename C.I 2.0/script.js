@@ -1,26 +1,60 @@
-// ==================================
-// CRÔNICA INSURGENTE
-// SCRIPT.JS - PARTE 1
-// ==================================
+// ==========================================
+// CRÔNICA INSURGENTE - SCRIPT COMPLETO
+// PARTE 1
+// ==========================================
 
 
-// ==================================
+// ==========================================
+// VARIÁVEIS GLOBAIS
+// ==========================================
+
+let jogoAtivo = false;
+let turno = "";
+
+let velocidadeTexto = 25;
+
+let evento70 = false;
+let evento40 = false;
+let evento15 = false;
+
+
+// VIDA GLOBAL DO INIMIGO
+
+let vidaInimigoMaxima = 170;
+let vidaInimigoAtual = 170;
+
+
+// VIDA GLOBAL DO JOGADOR
+
+let vidaJogadorMaxima = 170;
+let vidaJogadorAtual = 170;
+
+
+// ==========================================
 // PERSONAGENS
-// ==================================
+// ==========================================
 
 const jogador = {
 
     nome: "Arauto da Rebelião",
 
-    vidaMaxima: 130,
+    vidaMaxima: vidaJogadorMaxima,
+    vida: vidaJogadorAtual,
 
-    vida: 130,
+    energiaMaxima:100,
+    energia:0,
 
-    pocoes: 2,
+    pocoes:2,
 
-    defesa: false,
+    defesa:false,
 
-    queimadura: 0
+    queimadura:0,
+    sangramento:0,
+    enfraquecido:0,
+
+    criticoBonus:0,
+
+    supremoUsado:false
 
 };
 
@@ -28,115 +62,235 @@ const jogador = {
 
 const inimigo = {
 
-    nome: "Nêmesis Primordial",
+    nome:"Nêmesis Primordial",
 
-    vidaMaxima: 145,
+    vidaMaxima: vidaInimigoMaxima,
+    vida: vidaInimigoAtual,
 
-    vida: 145,
+    energiaMaxima:100,
+    energia:0,
 
-    pocoes: 2,
+    pocoes:2,
 
-    defesa: false,
+    defesa:false,
 
-    queimadura: 0
+    queimadura:0,
+    sangramento:0,
+    enfraquecido:0,
+
+    criticoBonus:10,
+
+    supremoUsado:false
 
 };
 
 
 
-// ==================================
-// ATAQUES
-// ==================================
 
-const ataques = {
-
-
-    ruina:{
-
-        nome:"Ruína Celestial",
-
-        dano:10,
-
-        efeito:null
-
-    },
+// ==========================================
+// ATAQUES DO JOGADOR
+// ==========================================
 
 
-    julgamento:{
-
-        nome:"Julgamento da Rebelião",
-
-        dano:16,
-
-        efeito:"queimadura"
-
-    },
+const ataquesJogador = {
 
 
-    colapso:{
+ruina:{
 
-        nome:"Colapso do Destino",
+    nome:"Ruína Celestial",
+    dano:16,
+    energia:15,
+    efeito:"normal"
 
-        dano:12,
-
-        efeito:null
-
-    },
+},
 
 
-    eclipse:{
+julgamento:{
 
-        nome:"Eclipse da Realidade",
+    nome:"Julgamento da Rebelião",
+    dano:14,
+    energia:20,
+    efeito:"queimadura"
 
-        dano:9,
+},
 
-        efeito:"duplo"
+
+destino:{
+
+    nome:"Dilacerar o Destino",
+    dano:10,
+    energia:20,
+    efeito:"duplo"
+
+},
+
+
+alvorecer:{
+
+    nome:"Último Alvorecer",
+    dano:30,
+    energia:35,
+    efeito:"erro"
+
+},
+
+
+supremo:{
+
+    nome:"Aurora da Humanidade",
+    dano:55,
+    energia:100,
+    efeito:"supremo"
+
+}
+
+
+};
+
+
+
+
+
+// ==========================================
+// ATAQUES DO INIMIGO
+// ==========================================
+
+
+const ataquesInimigo = {
+
+
+colapso:{
+
+    nome:"Colapso do Mundo",
+    dano:18,
+    energia:15,
+    efeito:"normal"
+
+},
+
+
+eclipse:{
+
+    nome:"Eclipse Absoluto",
+    dano:11,
+    energia:20,
+    efeito:"duplo"
+
+},
+
+
+julgamento:{
+
+    nome:"Julgamento Eterno",
+    dano:14,
+    energia:20,
+    efeito:"enfraquecer"
+
+},
+
+
+aniquilacao:{
+
+    nome:"Aniquilação Primordial",
+    dano:30,
+    energia:35,
+    efeito:"erro"
+
+},
+
+
+supremo:{
+
+    nome:"Fim da Criação",
+    dano:60,
+    energia:100,
+    efeito:"supremo"
+
+}
+
+
+};
+
+
+
+
+
+// ==========================================
+// ELEMENTOS HTML
+// ==========================================
+
+
+let menu;
+let historia;
+let jogo;
+
+let textoHistoria;
+let mensagens;
+
+
+let barraJogador;
+let barraInimigo;
+
+
+let energiaJogadorBarra;
+let energiaInimigoBarra;
+
+
+let vidaJogador;
+let vidaInimigo;
+
+
+let energiaJogador;
+let energiaInimigo;
+
+
+let pocoesJogador;
+let pocoesInimigo;
+
+
+let efeitosJogador;
+let efeitosInimigo;
+
+
+let textoTurno;
+
+
+
+
+// ==========================================
+// LIMPAR TERMINAL
+// ==========================================
+
+
+function limparMensagens(){
+
+    if(mensagens){
+
+        mensagens.innerHTML="";
 
     }
 
-};
+}
+
+// ==========================================
+// UTILIDADES
+// ==========================================
 
 
+function esperar(ms){
 
-// ==================================
-// VARIÁVEIS DO JOGO
-// ==================================
-
-let jogoAtivo = false;
-
-let turno = "";
-
-
-
-// ==================================
-// SISTEMA DE MENSAGEM
-// ==================================
-
-function mensagem(texto){
-
-
-    const terminal =
-    document.getElementById("mensagens");
-
-
-    terminal.innerHTML +=
-    "<p>" + texto + "</p>";
-
-
-    terminal.scrollTop =
-    terminal.scrollHeight;
+    return new Promise(resolve=>setTimeout(resolve,ms));
 
 }
 
 
 
-// pausa entre mensagens
+function irParaTopo(){
 
-function esperar(tempo){
+    window.scrollTo({
 
-    return new Promise(resolve =>{
-
-        setTimeout(resolve,tempo);
+        top:0,
+        behavior:"smooth"
 
     });
 
@@ -144,503 +298,310 @@ function esperar(tempo){
 
 
 
-// mensagem com intervalo
 
-async function mensagemLenta(texto){
+async function escrever(texto){
 
-    mensagem(texto);
+    const linha=document.createElement("p");
 
-    await esperar(700);
+    mensagens.appendChild(linha);
 
-}
 
+    for(let letra of texto){
 
+        linha.innerHTML+=letra;
 
-// ==================================
-// TROCA DE TELAS
-// ==================================
-
-function esconderTudo(){
-
-
-    document.getElementById("menu")
-    .classList.add("escondido");
-
-
-    document.getElementById("historia")
-    .classList.add("escondido");
-
-
-    document.getElementById("jogo")
-    .classList.add("escondido");
-
-
-}
-
-
-
-function mostrarHistoria(){
-
-
-    esconderTudo();
-
-
-    document.getElementById("historia")
-    .classList.remove("escondido");
-
-
-    document.getElementById("textoHistoria")
-    .innerHTML = `
-
-    As montanhas estremecem...
-
-    <br><br>
-
-    O céu perdeu sua luz.
-
-    <br><br>
-
-    Uma presença ancestral desperta.
-
-    <br><br>
-
-    Seu poder faz o próprio mundo
-    tremer diante da destruição.
-
-    <br><br>
-
-    Entre milhões de vidas,
-    apenas um cultivador ousou desafiar
-    aquele que se proclamou uma divindade.
-
-    <br><br>
-
-    Durante séculos, a humanidade explorou
-    a natureza sem limites.
-
-    <br><br>
-
-    Florestas desapareceram.
-    Rios secaram.
-    Montanhas foram reduzidas a cinzas.
-
-    <br><br>
-
-    Quando o equilíbrio foi rompido,
-    o Guardião da Natureza despertou.
-
-    <br><br>
-
-    Agora conhecido como
-    <b>Nêmesis Primordial</b>,
-    ele decidiu julgar a humanidade.
-
-    <br><br>
-
-    Você é o último transcendente.
-
-    O destino do mundo depende da sua força.
-
-    `;
-
-}
-
-
-
-// ==================================
-// MOSTRAR SINOPSE
-// ==================================
-
-function mostrarSinopse(){
-
-
-    esconderTudo();
-
-
-    document.getElementById("historia")
-    .classList.remove("escondido");
-
-
-    document.getElementById("textoHistoria")
-    .innerHTML = `
-
-
-    📜 <b>Sinopse</b>
-
-    <br><br>
-
-
-    A humanidade abusou da natureza
-    durante séculos.
-
-    <br><br>
-
-    Quando o equilíbrio finalmente acabou,
-    uma força ancestral despertou.
-
-    <br><br>
-
-    O mundo agora está diante de seu julgamento.
-
-    <br><br>
-
-    Apenas o Insurgente Divino pode impedir
-    o fim da civilização.
-
-    `;
-
-
-}
-
-// ==================================
-// INICIAR BATALHA
-// ==================================
-
-async function iniciarBatalha(){
-
-    esconderTudo();
-
-
-    document.getElementById("jogo")
-    .classList.remove("escondido");
-
-
-    jogoAtivo = true;
-
-
-    await mensagemLenta(
-        "⚔ O confronto final começa..."
-    );
-
-
-    await mensagemLenta(
-        "⚔ INSURGENTE DIVINO"
-    );
-
-
-    await mensagemLenta(
-        "O último transcendente que desafia uma força ancestral."
-    );
-
-
-    await mensagemLenta(
-        "🌑 NÊMESIS PRIMORDIAL"
-    );
-
-
-    await mensagemLenta(
-        "A manifestação do julgamento da natureza."
-    );
-
-
-    await mensagemLenta(
-        "════════════════════"
-    );
-
-
-    atualizarInterface();
-
-
-    // escolhe quem começa
-
-    if(Math.random() < 0.5){
-
-
-        turno = "jogador";
-
-
-        await mensagemLenta(
-            "🎭 O Insurgente Divino começa!"
-        );
-
-
-    }else{
-
-
-        turno = "inimigo";
-
-
-        await mensagemLenta(
-            "🌑 Nêmesis Primordial começa!"
-        );
-
-
-        setTimeout(turnoInimigo,1000);
-
+        await esperar(velocidadeTexto);
 
     }
 
+
+    mensagens.scrollTop=mensagens.scrollHeight;
+
 }
 
 
 
-// ==================================
-// ATUALIZAR INTERFACE
-// ==================================
+
+function esconderTelas(){
+
+    menu.classList.add("escondido");
+
+    historia.classList.add("escondido");
+
+    jogo.classList.add("escondido");
+
+}
+
+
+
+
+
+// ==========================================
+// ATUALIZAÇÃO DA INTERFACE
+// ==========================================
+
 
 function atualizarInterface(){
 
 
-    // vida jogador
+    barraJogador.style.width=
+    (jogador.vida/jogador.vidaMaxima*100)+"%";
 
-    document.getElementById("vidaJogador")
-    .innerHTML =
-    "❤️ Vida: "
-    + jogador.vida
-    + " / "
-    + jogador.vidaMaxima;
+
+    barraInimigo.style.width=
+    (inimigo.vida/inimigo.vidaMaxima*100)+"%";
 
 
 
-    document.getElementById("vidaInimigo")
-    .innerHTML =
-    "❤️ Vida: "
-    + inimigo.vida
-    + " / "
-    + inimigo.vidaMaxima;
+    vidaJogador.innerHTML=
+    "❤️ Vida: "+jogador.vida+" / "+jogador.vidaMaxima;
 
 
 
-    // poções
-
-
-    document.getElementById("pocoesJogador")
-    .innerHTML =
-    "🧪 Poções: "
-    + jogador.pocoes;
+    vidaInimigo.innerHTML=
+    "❤️ Vida: "+inimigo.vida+" / "+inimigo.vidaMaxima;
 
 
 
-    document.getElementById("pocoesInimigo")
-    .innerHTML =
-    "🧪 Poções: "
-    + inimigo.pocoes;
+
+    energiaJogadorBarra.style.width=
+    (jogador.energia/100*100)+"%";
 
 
 
-    // barras
-
-
-    document.getElementById("barraJogador")
-    .style.width =
-    (jogador.vida /
-    jogador.vidaMaxima * 100)
-    + "%";
+    energiaInimigoBarra.style.width=
+    (inimigo.energia/100*100)+"%";
 
 
 
-    document.getElementById("barraInimigo")
-    .style.width =
-    (inimigo.vida /
-    inimigo.vidaMaxima * 100)
-    + "%";
-
-}
+    energiaJogador.innerHTML=
+    "⚡ Energia: "+jogador.energia+"/100";
 
 
-
-// ==================================
-// DANO CRÍTICO
-// ==================================
-
-function calcularDano(dano){
-
-
-    let critico = false;
-
-
-    // 20% de chance
-
-    if(Math.random() < 0.20){
-
-        dano *= 2;
-
-        critico = true;
-
-    }
+    energiaInimigo.innerHTML=
+    "⚡ Energia: "+inimigo.energia+"/100";
 
 
 
-    return {
+    pocoesJogador.innerHTML=
+    "🧪 Poções: "+jogador.pocoes;
 
-        dano:dano,
 
-        critico:critico
-
-    };
+    pocoesInimigo.innerHTML=
+    "🧪 Poções: "+inimigo.pocoes;
 
 
 }
 
 
 
-// ==================================
-// APLICAR DANO
-// ==================================
 
-async function causarDano(
-    alvo,
-    dano,
-    nomeAtaque
-){
+// ==========================================
+// CONTROLE DOS BOTÕES
+// ==========================================
 
 
-    let resultado =
-    calcularDano(dano);
+function ativarBotoes(){
 
+    document.querySelectorAll(".acoes button")
+    .forEach(botao=>{
 
+        botao.disabled=false;
 
-    dano =
-    resultado.dano;
+    });
+
+}
 
 
 
-    if(resultado.critico){
+function desativarBotoes(){
+
+    document.querySelectorAll(".acoes button")
+    .forEach(botao=>{
+
+        botao.disabled=true;
+
+    });
+
+}
 
 
-        await mensagemLenta(
-            "💥 ATAQUE CRÍTICO!"
-        );
 
+
+// ==========================================
+// DANO
+// ==========================================
+
+
+function critico(atacante){
+
+    let chance=20+atacante.criticoBonus;
+
+    return Math.random()*100 < chance;
+
+}
+
+
+
+
+function calcularDano(atacante,alvo,dano){
+
+
+
+    if(critico(atacante)){
+
+        dano=Math.floor(dano*1.8);
+
+        escrever("💥 ACERTO CRÍTICO!");
 
     }
 
 
-
-    // defesa reduz metade
 
     if(alvo.defesa){
 
+        dano=Math.floor(dano/2);
 
-        dano =
-        Math.floor(dano / 2);
+        alvo.defesa=false;
 
-
-        alvo.defesa = false;
-
-
-        await mensagemLenta(
-            "🛡 A defesa reduziu o dano!"
-        );
-
+        escrever("🛡 Defesa reduziu o dano!");
 
     }
 
 
 
-    alvo.vida -= dano;
+    return dano;
+
+}
 
 
 
-    if(alvo.vida < 0){
 
-        alvo.vida = 0;
 
+function causarDano(alvo,dano){
+
+
+    alvo.vida-=dano;
+
+
+    if(alvo.vida<0)
+
+        alvo.vida=0;
+
+
+    atualizarInterface();
+
+
+}
+
+
+
+
+
+
+function ganharEnergia(personagem, quantidade) {
+
+    personagem.energia += quantidade;
+
+    if(personagem.energia > personagem.energiaMaxima){
+        personagem.energia = personagem.energiaMaxima;
     }
-
-
-
-    await mensagemLenta(
-
-        "💢 "
-        + nomeAtaque
-        + " causou "
-        + dano
-        + " de dano!"
-
-    );
-
-
-    await mensagemLenta(
-
-        "❤️ Vida restante: "
-        + alvo.vida
-
-    );
-
 
     atualizarInterface();
 
 }
 
-// ==================================
+
+
+
+
+
+
+// ==========================================
 // ATAQUES DO JOGADOR
-// ==================================
+// ==========================================
+
 
 
 async function usarAtaque(tipo){
 
 
-    if(!jogoAtivo) return;
 
-
-    if(turno !== "jogador"){
-
-        return;
-
-    }
+if(!jogoAtivo || turno!="jogador")
+return;
 
 
 
-    let ataque = ataques[tipo];
+let ataque=ataquesJogador[tipo];
+
+
+desativarBotoes();
 
 
 
-    await mensagemLenta(
-        "⚔ Você usou "
-        + ataque.nome
-        + " ("
-        + ataque.dano
-        + " dano)"
-    );
+await escrever(
+"⚔ "+jogador.nome+
+" usou "+ataque.nome
+);
 
 
 
-    await causarDano(
 
-        inimigo,
 
-        ataque.dano,
-
-        ataque.nome
-
-    );
+if(ataque.efeito=="duplo"){
 
 
 
-    // efeito de queimadura
-
-    if(ataque.efeito === "queimadura"){
+for(let i=0;i<2;i++){
 
 
-        inimigo.queimadura = 3;
-
-
-
-        await mensagemLenta(
-
-            "🔥 Nêmesis Primordial foi queimado!"
-
-        );
-
-    }
+let dano=calcularDano(
+jogador,
+inimigo,
+ataque.dano
+);
 
 
 
-    verificarFim();
+causarDano(inimigo,dano);
 
 
 
-    if(jogoAtivo){
+await escrever(
+"💥 Golpe "+(i+1)+": -"+dano+" HP"
+);
 
 
-        turno = "inimigo";
+await esperar(500);
 
 
-        setTimeout(turnoInimigo,1000);
+}
 
 
-    }
+
+}
+
+
+
+else{
+
+
+let dano=calcularDano(
+jogador,
+inimigo,
+ataque.dano
+);
+
+
+
+causarDano(inimigo,dano);
+
+
+
+await escrever(
+"💥 -"+dano+" HP"
+);
+
 
 
 }
@@ -648,41 +609,40 @@ async function usarAtaque(tipo){
 
 
 
-// ==================================
-// DEFESA
-// ==================================
+if(ataque.efeito=="queimadura"){
 
 
-async function defender(){
+inimigo.queimadura=3;
 
 
-    if(!jogoAtivo) return;
+await escrever(
+"🔥 Nêmesis sofreu queimadura!"
+);
 
 
-    if(turno !== "jogador"){
-
-        return;
-
-    }
+}
 
 
 
-    jogador.defesa = true;
+ganharEnergia(
+jogador,
+ataque.energia
+);
 
 
 
-    await mensagemLenta(
+if(inimigo.vida<=0){
 
-        "🛡 Insurgente Divino entrou em posição defensiva!"
+fimJogo();
 
-    );
+return;
 
-
-
-    turno = "inimigo";
+}
 
 
-    setTimeout(turnoInimigo,1000);
+
+finalizarTurnoJogador();
+
 
 
 }
@@ -690,89 +650,34 @@ async function defender(){
 
 
 
-// ==================================
-// POÇÃO
-// ==================================
-
-
-async function usarPocao(){
-
-
-    if(!jogoAtivo) return;
-
-
-    if(turno !== "jogador"){
-
-        return;
-
-    }
 
 
 
-    if(jogador.pocoes <= 0){
+// ==========================================
+// DEFENDER
+// ==========================================
 
 
-        await mensagemLenta(
-
-            "❌ Você não possui mais poções!"
-
-        );
-
-
-        return;
-
-    }
+function defender(){
 
 
 
-    jogador.pocoes--;
+jogador.defesa=true;
 
 
-
-    let cura = 30;
-
-
-
-    jogador.vida += cura;
+ganharEnergia(
+jogador,
+10
+);
 
 
-
-    if(jogador.vida > jogador.vidaMaxima){
-
-
-        jogador.vida =
-        jogador.vidaMaxima;
-
-    }
+escrever(
+"🛡 O Arauto criou uma defesa."
+);
 
 
+finalizarTurnoJogador();
 
-    await mensagemLenta(
-
-        "🧪 Você usou uma Poção!"
-
-    );
-
-
-
-    await mensagemLenta(
-
-        "❤️ Recuperou "
-        + cura
-        + " de vida!"
-
-    );
-
-
-
-    atualizarInterface();
-
-
-
-    turno = "inimigo";
-
-
-    setTimeout(turnoInimigo,1000);
 
 
 }
@@ -780,651 +685,854 @@ async function usarPocao(){
 
 
 
-// ==================================
-// FUGIR
-// ==================================
-
-
-async function fugir(){
-
-
-    if(!jogoAtivo) return;
 
 
 
-    jogoAtivo = false;
+// ==========================================
+// POÇÃO JOGADOR
+// ==========================================
 
 
 
-    await mensagemLenta(
-
-        "🏃 O Insurgente Divino abandonou a batalha."
-
-    );
+function usarPocao(){
 
 
+if(jogador.pocoes<=0){
 
-    bloquearBotoes();
+escrever("❌ Sem poções.");
+
+return;
 
 }
 
 
 
-// ==================================
-// EFEITO DE QUEIMADURA
-// ==================================
+jogador.pocoes--;
 
 
-async function aplicarEfeitos(){
-
-
-
-    if(inimigo.queimadura > 0){
-
-
-        inimigo.vida -= 4;
+jogador.vida+=35;
 
 
 
-        inimigo.queimadura--;
+if(jogador.vida>jogador.vidaMaxima)
+
+jogador.vida=jogador.vidaMaxima;
 
 
 
-        await mensagemLenta(
-
-            "🔥 Nêmesis sofreu 4 de dano da queimadura!"
-
-        );
-
-
-
-        atualizarInterface();
-
-
-    }
+ganharEnergia(
+jogador,
+10
+);
 
 
 
-    if(jogador.queimadura > 0){
-
-
-        jogador.vida -= 4;
+atualizarInterface();
 
 
 
-        jogador.queimadura--;
+escrever(
+"🧪 O Arauto recuperou vida."
+);
 
 
 
-        await mensagemLenta(
+finalizarTurnoJogador();
 
-            "🔥 Insurgente sofreu dano da queimadura!"
-
-        );
-
-
-
-        atualizarInterface();
-
-
-    }
 
 
 }
 
-// ==================================
-// TURNO DO INIMIGO
-// ==================================
+
+
+
+
+
+// ==========================================
+// TURNO INIMIGO
+// ==========================================
+
 
 async function turnoInimigo(){
 
 
-    if(!jogoAtivo) return;
+if(!jogoAtivo)
+return;
 
 
 
-    await mensagemLenta(
-        "🌑 Turno da Nêmesis Primordial..."
+await esperar(800);
+
+// SUPREMO
+
+if(inimigo.energia >= 100){
+
+    inimigo.energia = 0;
+
+    await escrever(
+    "💀 Nêmesis liberou: FIM DA CRIAÇÃO!"
     );
 
 
-
-    await aplicarEfeitos();
-
-
-
-    if(inimigo.vida <= 0){
-
-        verificarFim();
-
-        return;
-
-    }
-
-
-
-    let escolha = Math.random();
-
-
-
-    // usa poção quando estiver com pouca vida
-
-    if(
-        inimigo.vida <= 50 &&
-        inimigo.pocoes > 0 &&
-        escolha < 0.25
-    ){
-
-
-        await pocaoInimigo();
-
-
-
-    }
-
-
-
-    // defesa
-
-    else if(escolha < 0.45){
-
-
-        await defesaInimigo();
-
-
-
-    }
-
-
-
-    // fuga rara
-
-    else if(escolha < 0.48){
-
-
-        await mensagemLenta(
-
-            "🌑 A Nêmesis Primordial recuou da batalha..."
-
-        );
-
-
-        jogoAtivo = false;
-
-
-        bloquearBotoes();
-
-
-        return;
-
-
-    }
-
-
-
-    // ataque
-
-    else{
-
-
-        let ataquesInimigo = [
-
-            ataques.colapso,
-
-            ataques.eclipse
-
-        ];
-
-
-
-        let ataque =
-
-        ataquesInimigo[
-            Math.floor(
-                Math.random()
-                *
-                ataquesInimigo.length
-            )
-        ];
-
-
-
-        await ataqueInimigo(ataque);
-
-
-
-    }
-
-
-
-    verificarFim();
-
-
-
-    if(jogoAtivo){
-
-
-        turno = "jogador";
-
-
-        await mensagemLenta(
-
-            "🎭 Seu turno!"
-
-        );
-
-
-    }
-
-
-}
-
-
-
-// ==================================
-// ATAQUE DO INIMIGO
-// ==================================
-
-async function ataqueInimigo(ataque){
-
-
-
-    await mensagemLenta(
-
-        "🌑 Nêmesis usou "
-        + ataque.nome
-        + " ("
-        + ataque.dano
-        + " dano)"
-
-    );
-
-
-
-    await causarDano(
-
+    let dano = calcularDano(
+        inimigo,
         jogador,
-
-        ataque.dano,
-
-        ataque.nome
-
+        ataquesInimigo.supremo.dano
     );
 
 
-
-    // efeito golpe duplo
-
-    if(ataque.efeito === "duplo"){
+    causarDano(jogador,dano);
 
 
-        if(Math.random() < 0.40){
-
-
-            await mensagemLenta(
-
-                "⚡ O ataque atingiu novamente!"
-
-            );
-
-
-
-            await causarDano(
-
-                jogador,
-
-                ataque.dano,
-
-                "Segundo impacto"
-
-            );
-
-
-        }
-
-
-    }
-
-
-}
-
-
-
-// ==================================
-// POÇÃO DO INIMIGO
-// ==================================
-
-async function pocaoInimigo(){
-
-
-    inimigo.pocoes--;
-
-
-
-    let cura = 35;
-
-
-
-    inimigo.vida += cura;
-
-
-
-    if(
-        inimigo.vida >
-        inimigo.vidaMaxima
-    ){
-
-        inimigo.vida =
-        inimigo.vidaMaxima;
-
-    }
-
-
-
-    await mensagemLenta(
-
-        "🌑 Nêmesis Primordial usou uma poção!"
-
+    await escrever(
+    "💥 -" + dano + " HP"
     );
-
-
-
-    await mensagemLenta(
-
-        "❤️ Recuperou "
-        + cura
-        + " de vida."
-
-    );
-
 
 
     atualizarInterface();
 
 
+    finalizarTurnoInimigo();
+
+    return;
 }
 
+// POÇÃO
+
+if(
+inimigo.vida<70 &&
+inimigo.pocoes>0 &&
+Math.random()<0.6
+){
 
 
-// ==================================
-// DEFESA DO INIMIGO
-// ==================================
-
-async function defesaInimigo(){
+inimigo.pocoes--;
 
 
-    inimigo.defesa = true;
+inimigo.vida+=35;
 
 
+if(inimigo.vida>inimigo.vidaMaxima)
 
-    await mensagemLenta(
-
-        "🛡 Nêmesis Primordial criou uma barreira!"
-
-    );
-
-
-}
-
-// ==================================
-// VERIFICAR FIM DA BATALHA
-// ==================================
-
-function verificarFim(){
-
-
-    if(inimigo.vida <= 0){
-
-
-        jogoAtivo = false;
-
-
-        mensagem(
-            "🏆 VITÓRIA!"
-        );
-
-
-        mensagem(
-            "O Nêmesis Primordial foi derrotado."
-        );
-
-
-        mensagem(
-            "🌎 A humanidade ganhou uma nova chance."
-        );
-
-
-        bloquearBotoes();
-
-
-        return true;
-
-    }
+inimigo.vida=inimigo.vidaMaxima;
 
 
 
-    if(jogador.vida <= 0){
-
-
-        jogoAtivo = false;
-
-
-        mensagem(
-            "☠ DERROTA!"
-        );
-
-
-        mensagem(
-            "O Insurgente Divino caiu diante do julgamento."
-        );
-
-
-        mensagem(
-            "🌑 A Nêmesis Primordial venceu."
-        );
-
-
-        bloquearBotoes();
-
-
-        return true;
-
-    }
+await escrever(
+"🧪 Nêmesis usou uma poção!"
+);
 
 
 
-    return false;
+finalizarTurnoInimigo();
+
+return;
 
 
 }
 
 
 
-// ==================================
-// BLOQUEAR BOTÕES
-// ==================================
 
-function bloquearBotoes(){
+// DEFESA
 
-
-    let botoes =
-    document.querySelectorAll(
-        ".acoes button"
-    );
+if(Math.random()<0.15){
 
 
+inimigo.defesa=true;
 
-    botoes.forEach(
-        botao => {
 
-            botao.disabled = true;
-
-        }
-    );
-
-}
+await escrever(
+"🛡 Nêmesis criou uma barreira!"
+);
 
 
 
-// ==================================
-// REINICIAR BATALHA
-// ==================================
+finalizarTurnoInimigo();
 
-function reiniciarJogo(){
-
-
-    jogador.vida =
-    jogador.vidaMaxima;
-
-
-    inimigo.vida =
-    inimigo.vidaMaxima;
-
-
-    jogador.pocoes = 2;
-
-
-    inimigo.pocoes = 2;
-
-
-    jogador.defesa = false;
-
-
-    inimigo.defesa = false;
-
-
-    jogador.queimadura = 0;
-
-
-    inimigo.queimadura = 0;
-
-
-    jogoAtivo = true;
-
-
-    atualizarInterface();
+return;
 
 
 }
 
 
 
-// ==================================
-// ATIVAR BOTÕES NOVAMENTE
-// ==================================
-
-function ativarBotoes(){
 
 
-    let botoes =
-    document.querySelectorAll(
-        ".acoes button"
-    );
+// ATAQUE NORMAL
+
+
+let lista=[
+
+"colapso",
+"eclipse",
+"julgamento",
+"aniquilacao"
+
+];
 
 
 
-    botoes.forEach(
-        botao => {
+let tipo=
+lista[
+Math.floor(Math.random()*lista.length)
+];
 
-            botao.disabled = false;
 
-        }
-    );
+
+let ataque=ataquesInimigo[tipo];
+
+
+
+await escrever(
+"🌑 Nêmesis usou "+ataque.nome
+);
+
+
+
+let dano=calcularDano(
+
+inimigo,
+
+jogador,
+
+ataque.dano
+
+);
+
+
+
+causarDano(jogador,dano);
+
+
+await escrever(
+"💥 -"+dano+" HP"
+);
+
+
+// GANHAR ENERGIA
+inimigo.energia += ataque.energia;
+
+if(inimigo.energia > inimigo.energiaMaxima){
+    inimigo.energia = inimigo.energiaMaxima;
+}
+
+
+await escrever(
+"⚡ Nêmesis ganhou " + ataque.energia + 
+" energia. Total: " + inimigo.energia
+);
+
+
+atualizarInterface();
+
+
+finalizarTurnoInimigo();
+
 
 }
 
 
 
-// ==================================
-// SOBRESCREVE INÍCIO DA BATALHA
-// ==================================
 
-const inicioOriginal =
-iniciarBatalha;
+function finalizarTurnoJogador(){
 
 
-
-iniciarBatalha = async function(){
-
-
-    reiniciarJogo();
+turno="inimigo";
 
 
-    ativarBotoes();
-
-
-    esconderTudo();
-
-
-    document
-    .getElementById("jogo")
-    .classList
-    .remove("escondido");
+textoTurno.innerHTML=
+"Turno: "+inimigo.nome;
 
 
 
-    document
-    .getElementById("mensagens")
-    .innerHTML = "";
-
-
-
-    await mensagemLenta(
-
-        "⚔ A batalha entre forças opostas começou!"
-
-    );
-
-
-
-    await mensagemLenta(
-
-        "⚔ Insurgente Divino VS 🌑 Nêmesis Primordial"
-
-    );
-
-
-
-    atualizarInterface();
-
-
-
-    if(Math.random() < 0.5){
-
-
-        turno = "jogador";
-
-
-        await mensagemLenta(
-
-            "🎭 Você começa o combate!"
-
-        );
-
-
-    }
-
-    else{
-
-
-        turno = "inimigo";
-
-
-        await mensagemLenta(
-
-            "🌑 Nêmesis Primordial começa!"
-
-        );
-
-
-        setTimeout(
-            turnoInimigo,
-            1000
-        );
-
-
-    }
+setTimeout(
+turnoInimigo,
+1000
+);
 
 
 }
 
+
+
+
+function finalizarTurnoInimigo(){
+
+
+turno="jogador";
+
+
+textoTurno.innerHTML=
+"Turno: "+jogador.nome;
+
+
+ativarBotoes();
+
+
+}
+
+// ==========================================
+// HISTÓRIA E SINOPSE
+// ==========================================
+
+
+const introducao=[
+
+"As montanhas estremecem.",
+
+"O céu perde sua luz.",
+
+"Uma presença ancestral desperta.",
+
+"Seu poder faz o mundo tremer.",
+
+"Entre milhões de vidas...",
+
+"Somente um homem ousou desafiar",
+
+"aquele que desejava apagar toda existência."
+
+];
+
+
+
+const sinopse=[
+
+"Durante séculos, a humanidade explorou a natureza sem limites.",
+
+"Florestas desapareceram.",
+
+"Rios secaram.",
+
+"O equilíbrio finalmente foi rompido.",
+
+"O antigo Guardião da Natureza despertou.",
+
+"Agora conhecido como Nêmesis Primordial.",
+
+"Seu objetivo é eliminar toda civilização.",
+
+"Você é o Arauto da Rebelião.",
+
+"A última esperança da humanidade."
+
+];
+
+
+
+
+
+
+async function mostrarHistoria(){
+
+
+esconderTelas();
+
+
+historia.classList.remove("escondido");
+
+
+irParaTopo();
+
+
+textoHistoria.innerHTML="";
+
+
+
+for(let frase of introducao){
+
+textoHistoria.innerHTML+=
+"<p>"+frase+"</p>";
+
+await esperar(1200);
+
+}
+
+
+
+textoHistoria.innerHTML+="<hr>";
+
+
+
+for(let frase of sinopse){
+
+textoHistoria.innerHTML+=
+"<p>"+frase+"</p>";
+
+await esperar(1200);
+
+}
+
+
+}
+
+
+
+async function mostrarSinopse(){
+
+
+esconderTelas();
+
+
+historia.classList.remove("escondido");
+
+
+irParaTopo();
+
+
+
+textoHistoria.innerHTML="";
+
+
+
+for(let frase of sinopse){
+
+textoHistoria.innerHTML+=
+"<p>"+frase+"</p>";
+
+await esperar(1200);
+
+}
+
+
+}
+
+
+
+
+
+
+// ==========================================
+// INICIAR BATALHA
+// ==========================================
+
+
+async function iniciarBatalha(){
+
+
+esconderTelas();
+
+
+jogo.classList.remove("escondido");
+
+
+
+irParaTopo();
+
+
+
+mensagens.innerHTML="";
+
+
+
+jogoAtivo=true;
+
+
+
+jogador.vida=jogador.vidaMaxima;
+
+inimigo.vida=inimigo.vidaMaxima;
+
+
+
+atualizarInterface();
+
+
+
+await escrever(
+"⚔ O destino do mundo será decidido."
+);
+
+
+await escrever(
+jogador.nome+" VS "+inimigo.nome
+);
+
+
+await escrever(
+"A batalha começou!"
+);
+
+
+
+if(Math.random()<0.5){
+
+
+turno="jogador";
+
+
+textoTurno.innerHTML=
+"Turno: "+jogador.nome;
+
+
+ativarBotoes();
+
+
+}
+
+
+else{
+
+
+turno="inimigo";
+
+
+textoTurno.innerHTML=
+"Turno: "+inimigo.nome;
+
+
+desativarBotoes();
+
+
+setTimeout(
+turnoInimigo,
+1000
+);
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+// ==========================================
+// ATAQUE SUPREMO
+// ==========================================
+
+
+async function ataqueSupremoJogador(){
+
+
+
+if(jogador.energia<100){
+
+escrever(
+"⚡ Energia insuficiente."
+);
+
+return;
+
+}
+
+
+
+if(jogador.supremoUsado){
+
+escrever(
+"❌ Supremo já utilizado."
+);
+
+return;
+
+}
+
+
+
+jogador.supremoUsado=true;
+
+jogador.energia=0;
+
+
+
+await escrever(
+"☀ AURORA DA HUMANIDADE!"
+);
+
+
+
+let dano=
+calcularDano(
+jogador,
+inimigo,
+ataquesJogador.supremo.dano
+);
+
+
+
+causarDano(
+inimigo,
+dano
+);
+
+
+
+await escrever(
+"💥 -"+dano+" HP"
+);
+
+
+
+fimJogo();
+
+
+
+}
+
+
+
+
+
+
+
+// ==========================================
+// EFEITOS
+// ==========================================
+
+
+function aplicarEfeitos(p){
+
+
+
+if(p.queimadura>0){
+
+
+p.queimadura--;
+
+
+p.vida-=6;
+
+
+escrever(
+"🔥 Queimadura causou 6 dano."
+);
+
+
+}
+
+
+
+if(p.vida<0)
+
+p.vida=0;
+
+
+
+atualizarInterface();
+
+
+}
+
+
+
+
+
+
+// ==========================================
+// FIM DE JOGO
+// ==========================================
+
+
+function fimJogo(){
+
+
+
+if(inimigo.vida<=0){
+
+
+inimigo.vida=0;
+
+
+jogoAtivo=false;
+
+
+desativarBotoes();
+
+
+
+escrever(
+"🏆 Nêmesis Primordial foi derrotada!"
+);
+
+
+
+return;
+
+
+}
+
+
+
+
+if(jogador.vida<=0){
+
+
+
+jogador.vida=0;
+
+
+jogoAtivo=false;
+
+
+desativarBotoes();
+
+
+
+escrever(
+"☠ O Arauto caiu em batalha."
+);
+
+
+
+}
+
+
+
+atualizarInterface();
+
+
+
+}
+
+
+
+
+
+
+
+// ==========================================
+// CARREGAMENTO
+// ==========================================
+
+
+window.onload=function(){
+
+
+
+menu=
+document.getElementById("menu");
+
+
+historia=
+document.getElementById("historia");
+
+
+jogo=
+document.getElementById("jogo");
+
+
+textoHistoria=
+document.getElementById("textoHistoria");
+
+
+mensagens=
+document.getElementById("mensagens");
+
+
+
+barraJogador=
+document.getElementById("barraJogador");
+
+
+barraInimigo=
+document.getElementById("barraInimigo");
+
+
+
+energiaJogadorBarra=
+document.getElementById("energiaJogadorBarra");
+
+
+energiaInimigoBarra=
+document.getElementById("energiaInimigoBarra");
+
+
+
+vidaJogador=
+document.getElementById("vidaJogador");
+
+
+vidaInimigo=
+document.getElementById("vidaInimigo");
+
+
+
+energiaJogador=
+document.getElementById("energiaJogador");
+
+
+energiaInimigo=
+document.getElementById("energiaInimigo");
+
+
+
+pocoesJogador=
+document.getElementById("pocoesJogador");
+
+
+pocoesInimigo=
+document.getElementById("pocoesInimigo");
+
+
+
+textoTurno=
+document.getElementById("textoTurno");
+
+
+
+document
+.getElementById("btnRuina")
+.onclick=
+()=>usarAtaque("ruina");
+
+
+
+document
+.getElementById("btnJulgamento")
+.onclick=
+()=>usarAtaque("julgamento");
+
+
+
+document
+.getElementById("btnDestino")
+.onclick=
+()=>usarAtaque("destino");
+
+
+
+document
+.getElementById("btnAlvorecer")
+.onclick=
+()=>usarAtaque("alvorecer");
+
+
+
+document
+.getElementById("btnSupremo")
+.onclick=
+ataqueSupremoJogador;
+
+
+
+document
+.getElementById("btnDefender")
+.onclick=
+defender;
+
+
+
+document
+.getElementById("btnPocao")
+.onclick=
+usarPocao;
+
+
+
+esconderTelas();
+
+
+menu.classList.remove("escondido");
+
+
+atualizarInterface();
+
+
+
+};

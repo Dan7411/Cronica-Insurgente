@@ -1,215 +1,327 @@
-/* ===================================== */
+/* ================================= */
 /* CONFIGURAÇÕES GERAIS */
-/* ===================================== */
+/* ================================= */
 
 *{
-
     margin:0;
-
     padding:0;
-
     box-sizing:border-box;
-
     font-family:Arial, Helvetica, sans-serif;
+}
+
+
+html{
+
+    overflow-y:auto;
+    scroll-behavior:smooth;
 
 }
+
 
 body{
 
     background:
-    linear-gradient(
-        180deg,
-        #090909,
-        #161616,
-        #050505
-    );
+    radial-gradient(circle at top,#252000,#090909 50%);
 
     color:white;
 
     min-height:100vh;
+
+    width:100%;
 
     overflow-x:hidden;
 
 }
 
-/* ===================================== */
+
+
+.escondido{
+
+    display:none !important;
+
+}
+
+
+
+/* ================================= */
 /* TELAS */
-/* ===================================== */
+/* ================================= */
+
 
 .tela{
+
+    min-height:100vh;
+
+    width:100%;
 
     display:flex;
 
     flex-direction:column;
 
-    align-items:center;
-
     justify-content:center;
 
-    min-height:100vh;
+    align-items:center;
 
     padding:40px;
 
 }
 
-.escondido{
 
-    display:none;
+
+
+.painel-menu,
+.painel-historia{
+
+
+    width:600px;
+
+    max-width:100%;
+
+
+    background:
+
+    linear-gradient(
+        145deg,
+        #202020,
+        #0c0c0c
+    );
+
+
+    border:2px solid #555;
+
+    border-radius:20px;
+
+    padding:40px;
+
+    text-align:center;
+
+
+    box-shadow:
+
+    0 0 30px #000;
+
 
 }
 
-/* ===================================== */
+
+
+/* ================================= */
 /* TÍTULOS */
-/* ===================================== */
+/* ================================= */
+
 
 h1{
 
-    font-size:46px;
-
     color:#ffd700;
 
-    text-shadow:
+    font-size:48px;
 
-    0 0 15px gold,
-
-    0 0 35px orange;
+    letter-spacing:3px;
 
     margin-bottom:20px;
 
+    text-align:center;
+
+
+    text-shadow:
+
+    0 0 10px gold,
+
+    0 0 30px orange;
+
 }
+
+
 
 h2{
 
-    margin-bottom:15px;
+    color:#ffd54a;
 
-    color:#ffcf40;
+    margin-bottom:15px;
 
 }
 
-/* ===================================== */
-/* PARÁGRAFOS */
-/* ===================================== */
+
 
 p{
 
-    font-size:19px;
-
-    line-height:1.6;
-
     margin:10px 0;
+
+    line-height:1.5;
 
 }
 
-/* ===================================== */
+
+
+
+
+/* ================================= */
 /* BOTÕES */
-/* ===================================== */
+/* ================================= */
+
 
 button{
 
+
     width:100%;
 
-    margin-top:12px;
+    padding:13px;
 
-    padding:14px;
+    margin-top:10px;
 
-    font-size:17px;
+
+    background:#202020;
+
 
     color:white;
 
-    background:#242424;
 
-    border:2px solid #777;
+    border:2px solid #555;
+
 
     border-radius:10px;
 
+
+    font-size:16px;
+
+
     cursor:pointer;
 
-    transition:0.25s;
+
+    transition:.25s;
+
 
 }
 
+
+
 button:hover{
 
-    background:#363636;
+
+    background:#333;
 
     border-color:#ffd700;
 
     transform:scale(1.03);
 
+
 }
+
+
 
 button:disabled{
 
-    opacity:.45;
+    opacity:.4;
 
     cursor:not-allowed;
 
 }
 
-/* ===================================== */
-/* TURNO */
-/* ===================================== */
 
-#turnoAtual{
 
-    text-align:center;
 
-    font-size:22px;
 
-    margin-bottom:25px;
+/* ================================= */
+/* JOGO */
+/* ================================= */
 
-    color:#ffd700;
 
-    font-weight:bold;
+#jogo{
+
+    width:100%;
+
+    padding:30px;
 
 }
 
-/* ===================================== */
-/* STATUS DOS PERSONAGENS */
-/* ===================================== */
+
+
+
+
+/* ================================= */
+/* STATUS */
+/* ================================= */
+
 
 .status{
 
+
     display:flex;
 
-    justify-content:space-between;
+    gap:25px;
 
-    gap:30px;
+    width:100%;
 
-    margin-bottom:30px;
+    margin:30px 0;
+
 
 }
 
+
+
 .personagem{
+
 
     flex:1;
 
-    background:#1a1a1a;
 
-    border:2px solid #444;
+    background:
+
+    linear-gradient(
+        145deg,
+        #202020,
+        #111
+    );
+
+
+    border:2px solid #555;
 
     border-radius:15px;
 
     padding:20px;
 
-    box-shadow:0 0 20px rgba(0,0,0,.6);
+
+    box-shadow:
+
+    0 0 20px #000;
+
 
 }
 
-.personagem h2{
 
-    text-align:center;
 
-    margin-bottom:20px;
+.jogador{
+
+    border-color:#227722;
 
 }
 
-/* ===================================== */
+
+
+.inimigo{
+
+    border-color:#990000;
+
+
+    box-shadow:
+
+    0 0 25px rgba(255,0,0,.25);
+
+
+}
+
+
+
+
+
+/* ================================= */
 /* BARRAS */
-/* ===================================== */
+/* ================================= */
+
 
 .barraVida,
 .barraEnergia{
+
 
     width:100%;
 
@@ -217,191 +329,259 @@ button:disabled{
 
     background:#333;
 
-    border-radius:12px;
+    border-radius:15px;
 
     overflow:hidden;
 
-    margin:12px 0;
+    margin:10px 0;
 
-    border:1px solid #555;
 
 }
 
-#barraJogador,
-#barraInimigo{
 
-    width:100%;
+
+#barraJogador{
+
 
     height:100%;
 
-    background:linear-gradient(
+
+    background:
+
+    linear-gradient(
         90deg,
-        #16c60c,
-        #47ff47
+        #00aa00,
+        #7fff7f
     );
 
-    transition:width .45s;
+
+    transition:width .5s ease;
+
 
 }
+
+
+
+#barraInimigo{
+
+
+    height:100%;
+
+
+    background:
+
+    linear-gradient(
+        90deg,
+        #800000,
+        #ff2222
+    );
+
+
+    transition:width .5s ease;
+
+
+}
+
+
 
 #energiaJogadorBarra,
 #energiaInimigoBarra{
 
-    width:0%;
 
     height:100%;
 
-    background:linear-gradient(
+
+    background:
+
+    linear-gradient(
         90deg,
-        #00b7ff,
-        #6ed8ff
+        #0066ff,
+        #66ddff
     );
 
-    transition:width .35s;
+
+    transition:width .5s ease;
+
 
 }
 
-/* ===================================== */
+
+
+
+/* ================================= */
 /* EFEITOS */
-/* ===================================== */
+/* ================================= */
+
 
 .efeitos{
+
 
     display:flex;
 
     flex-wrap:wrap;
 
-    justify-content:center;
-
     gap:8px;
 
     margin-top:15px;
 
-    min-height:32px;
 
 }
 
+
+
 .efeito{
 
-    background:#2d2d2d;
 
-    border:1px solid #777;
+    background:#333;
+
+
+    padding:6px 10px;
+
 
     border-radius:20px;
 
-    padding:5px 10px;
+
+    font-size:13px;
+
+
+}
+
+
+
+
+
+/* ================================= */
+/* BATALHA */
+/* ================================= */
+
+
+.batalha{
+
+
+    display:grid;
+
+
+    grid-template-columns:35% 65%;
+
+
+    gap:20px;
+
+
+}
+
+
+
+
+
+/* ================================= */
+/* AÇÕES */
+/* ================================= */
+
+
+.acoes{
+
+
+    background:#181818;
+
+
+    border:2px solid #444;
+
+
+    border-radius:15px;
+
+
+    padding:20px;
+
+
+}
+
+
+
+.acoes button{
+
+    padding:10px;
+
+    font-size:15px;
+
+}
+
+
+
+.acoes p{
+
+    color:#ccc;
 
     font-size:14px;
 
 }
 
-/* ===================================== */
-/* ÁREA DA BATALHA */
-/* ===================================== */
 
-.batalha{
 
-    display:grid;
 
-    grid-template-columns:40% 60%;
 
-    gap:20px;
-
-}
-
-/* ===================================== */
-/* PAINEL DE AÇÕES */
-/* ===================================== */
-
-.acoes{
-
-    background:#181818;
-
-    border:2px solid #444;
-
-    border-radius:15px;
-
-    padding:20px;
-
-    min-height:620px;
-
-}
-
-.acoes p{
-
-    font-size:15px;
-
-    color:#bfbfbf;
-
-    margin-top:4px;
-
-    margin-bottom:16px;
-
-}
-
-/* ===================================== */
+/* ================================= */
 /* TERMINAL */
-/* ===================================== */
+/* ================================= */
+
 
 .terminal{
 
-    background:#101010;
 
-    border:2px solid #444;
+    background:#080808;
+
+
+    border:2px sólida #444;
+
 
     border-radius:15px;
 
+
     padding:20px;
 
-    min-height:620px;
 
 }
+
+
 
 #mensagens{
 
-    height:540px;
+
+    height:550px;
+
 
     overflow-y:auto;
 
-    padding-right:8px;
 
-    font-size:20px;
+    font-size:18px;
+
 
     line-height:1.8;
 
+
 }
 
-/* ===================================== */
+
+
+
+
+/* ================================= */
 /* ANIMAÇÕES */
-/* ===================================== */
+/* ================================= */
+
 
 @keyframes critico{
 
-    0%{
-
-        transform:scale(1);
-
-        filter:brightness(1);
-
-    }
 
     50%{
 
         transform:scale(1.08);
 
-        filter:brightness(2);
-
     }
 
-    100%{
-
-        transform:scale(1);
-
-        filter:brightness(1);
-
-    }
 
 }
+
+
 
 .critico{
 
@@ -411,45 +591,42 @@ button:disabled{
 
 
 
+
+
 @keyframes tremer{
 
-    0%{
-
-        transform:translateX(0);
-
-    }
 
     20%{
-
-        transform:translateX(-8px);
-
-    }
-
-    40%{
-
-        transform:translateX(8px);
-
-    }
-
-    60%{
 
         transform:translateX(-6px);
 
     }
 
-    80%{
+
+    40%{
 
         transform:translateX(6px);
 
     }
 
-    100%{
 
-        transform:translateX(0);
+    60%{
+
+        transform:translateX(-5px);
 
     }
 
+
+    80%{
+
+        transform:translateX(5px);
+
+    }
+
+
 }
+
+
 
 .tremer{
 
@@ -459,158 +636,15 @@ button:disabled{
 
 
 
-/* ===================================== */
-/* NÚMERO DE DANO */
-/* ===================================== */
 
-.dano{
 
-    position:absolute;
+/* ================================= */
+/* RESPONSIVO */
+/* ================================= */
 
-    color:#ff4040;
-
-    font-size:34px;
-
-    font-weight:bold;
-
-    text-shadow:
-
-    0 0 8px red,
-
-    0 0 16px darkred;
-
-    animation:subir 1s forwards;
-
-    pointer-events:none;
-
-}
-
-@keyframes subir{
-
-    from{
-
-        opacity:1;
-
-        transform:
-
-        translateY(0);
-
-    }
-
-    to{
-
-        opacity:0;
-
-        transform:
-
-        translateY(-60px);
-
-    }
-
-}
-
-
-
-/* ===================================== */
-/* BARRAS */
-/* ===================================== */
-
-#barraJogador,
-#barraInimigo,
-#energiaJogadorBarra,
-#energiaInimigoBarra{
-
-    transition:
-
-    width .45s ease,
-
-    background .4s ease;
-
-}
-
-
-
-/* ===================================== */
-/* TERMINAL */
-/* ===================================== */
-
-#mensagens{
-
-    scroll-behavior:smooth;
-
-}
-
-#mensagens::-webkit-scrollbar{
-
-    width:10px;
-
-}
-
-#mensagens::-webkit-scrollbar-track{
-
-    background:#1b1b1b;
-
-    border-radius:20px;
-
-}
-
-#mensagens::-webkit-scrollbar-thumb{
-
-    background:#666;
-
-    border-radius:20px;
-
-}
-
-#mensagens::-webkit-scrollbar-thumb:hover{
-
-    background:#999;
-
-}
-
-
-
-/* ===================================== */
-/* EFEITOS */
-/* ===================================== */
-
-.efeitoQueimadura{
-
-    color:#ff6a00;
-
-}
-
-.efeitoSangramento{
-
-    color:#ff3030;
-
-}
-
-.efeitoEscudo{
-
-    color:#57b7ff;
-
-}
-
-.efeitoAtordoado{
-
-    color:#ffd54f;
-
-}
-
-.efeitoBuff{
-
-    color:#74ff6a;
-
-}
-
-
-
-/* ===================================== */
-/* RESPONSIVIDADE */
-/* ===================================== */
 
 @media(max-width:900px){
+
 
     .status{
 
@@ -618,66 +652,30 @@ button:disabled{
 
     }
 
+
     .batalha{
 
         grid-template-columns:1fr;
 
     }
 
-    .acoes{
 
-        min-height:auto;
-
-    }
-
-    .terminal{
-
-        min-height:420px;
-
-    }
-
-    #mensagens{
-
-        height:320px;
-
-        font-size:17px;
-
-    }
 
     h1{
 
-        font-size:34px;
+        font-size:32px;
 
     }
 
-    h2{
 
-        font-size:24px;
 
-    }
+    #mensagens{
 
-    button{
+        height:350px;
 
-        font-size:16px;
+        font-size:15px;
 
     }
 
-}
-
-
-
-/* ===================================== */
-/* RODAPÉ */
-/* ===================================== */
-
-footer{
-
-    margin-top:25px;
-
-    text-align:center;
-
-    color:#777;
-
-    font-size:14px;
 
 }

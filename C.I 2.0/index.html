@@ -3,314 +3,353 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Crônica Insurgente</title>
+<title>Crônica Insurgente</title>
 
-    <link rel="stylesheet"
-          href="style.css">
+<link rel="stylesheet" href="style.css">
 
 </head>
 
+
 <body>
 
-<!-- ====================================== -->
-<!-- MENU PRINCIPAL -->
-<!-- ====================================== -->
+
+<!-- MENU -->
 
 <section id="menu" class="tela">
 
-    <h1>⚔ CRÔNICA INSURGENTE ⚔</h1>
+<div class="painel-menu">
 
-    <p>
-        O destino da humanidade está prestes
-        a ser decidido.
-    </p>
+<h1>⚔ CRÔNICA INSURGENTE ⚔</h1>
 
-    <button onclick="mostrarHistoria()">
-        📜 Introdução + Sinopse
-    </button>
+<p>
+O destino da humanidade será decidido.
+</p>
 
-    <button onclick="mostrarSinopse()">
-        📖 Apenas Sinopse
-    </button>
 
-    <button onclick="iniciarBatalha()">
-        ⚔ Iniciar Batalha
-    </button>
+<button onclick="mostrarHistoria();">
+📜 Ver introdução e sinopse
+</button>
 
-</section>
 
-<!-- ====================================== -->
-<!-- HISTÓRIA -->
-<!-- ====================================== -->
+<button onclick="mostrarSinopse();">
+📖 Ver apenas a sinopse
+</button>
 
-<section id="historia"
-         class="tela escondido">
 
-    <div id="textoHistoria"></div>
+<button onclick="iniciarBatalha();">
+⚔ Iniciar batalha
+</button>
 
-    <button onclick="iniciarBatalha()">
-
-        ⚔ Iniciar Batalha
-
-    </button>
-
-</section>
-
-<!-- ====================================== -->
-<!-- BATALHA -->
-<!-- ====================================== -->
-
-<section id="jogo"
-         class="escondido">
-
-<h1>
-
-⚔ CRÔNICA INSURGENTE ⚔
-
-</h1>
-
-<div id="turnoAtual">
-
-Turno:
-<span id="textoTurno">
-Aguardando...
-</span>
 
 </div>
 
-<!-- ====================================== -->
+</section>
+
+
+
+
+<!-- HISTÓRIA -->
+
+<section id="historia" class="tela escondido">
+
+
+<div class="painel-historia">
+
+<div id="textoHistoria"></div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+<!-- JOGO -->
+
+<section id="jogo" class="tela escondido">
+
+
+<h1 class="tituloJogo">
+⚔ CRÔNICA INSURGENTE ⚔
+</h1>
+
+
+<h2 id="textoTurno"></h2>
+
+
+
+
+
 <!-- STATUS -->
-<!-- ====================================== -->
 
 <div class="status">
 
-<div class="personagem">
+
+
+<div class="personagem jogador">
+
 
 <h2>
-
 ⚔ Arauto da Rebelião
-
 </h2>
 
+
 <div class="barraVida">
-
 <div id="barraJogador"></div>
-
 </div>
+
 
 <p id="vidaJogador"></p>
 
+
+
+<div class="barraEnergia">
+<div id="energiaJogadorBarra"></div>
+</div>
+
+
 <p id="energiaJogador"></p>
+
 
 <p id="pocoesJogador"></p>
 
-<div id="efeitosJogador"
-     class="efeitos"></div>
+
+<div id="efeitosJogador" class="efeitos"></div>
+
 
 </div>
 
-<div class="personagem">
+
+
+
+
+
+
+<div class="personagem inimigo">
+
 
 <h2>
-
 🌑 Nêmesis Primordial
-
 </h2>
 
+
 <div class="barraVida">
-
 <div id="barraInimigo"></div>
-
 </div>
+
 
 <p id="vidaInimigo"></p>
 
+
+
+<div class="barraEnergia">
+<div id="energiaInimigoBarra"></div>
+</div>
+
+
 <p id="energiaInimigo"></p>
+
 
 <p id="pocoesInimigo"></p>
 
-<div id="efeitosInimigo"
-     class="efeitos"></div>
+
+<div id="efeitosInimigo" class="efeitos"></div>
+
 
 </div>
 
+
 </div>
 
-<!-- ====================================== -->
-<!-- ÁREA PRINCIPAL -->
-<!-- ====================================== -->
+
+
+
+
+
+<!-- BATALHA -->
 
 <div class="batalha">
 
-<!-- ====================================== -->
-<!-- PAINEL DE AÇÕES -->
-<!-- ====================================== -->
+
 
 <div class="acoes">
 
+
 <h2>
-
 ⚔ Ações
-
 </h2>
 
-<!-- Ataque 1 -->
 
-<button id="btnRuina">
 
-⚔ Ruína Celestial (14)
+<button id="btnRuina"
+onclick="usarAtaque('ruina');">
+
+⚔ Ruína Celestial (16)
 
 </button>
 
 <p>
-
-Golpe rápido que ignora parte da defesa inimiga.
-
+Golpe rápido e preciso.
+<br>
+Gera +15 energia.
 </p>
 
 
-<!-- Ataque 2 -->
 
-<button id="btnJulgamento">
 
-🔥 Julgamento da Rebelião (12)
+<button id="btnJulgamento"
+onclick="usarAtaque('julgamento');">
+
+🔥 Julgamento da Rebelião (14)
 
 </button>
 
 <p>
-
-Aplica Queimadura por 3 turnos.
-
+Aplica queimadura por 3 turnos.
+<br>
+Gera +20 energia.
 </p>
 
 
-<!-- Ataque 3 -->
 
-<button id="btnDestino">
 
-⚡ Dilacerar o Destino (8 × 2)
+
+<button id="btnDestino"
+onclick="usarAtaque('destino');">
+
+⚡ Dilacerar o Destino (10x2)
 
 </button>
 
 <p>
-
 Dois golpes consecutivos.
-
-Cada golpe possui chance de crítico.
-
+<br>
+Gera +20 energia.
 </p>
 
 
-<!-- Ataque 4 -->
 
-<button id="btnAlvorecer">
 
-☀ Último Alvorecer (22)
+
+<button id="btnAlvorecer"
+onclick="usarAtaque('alvorecer');">
+
+☀ Último Alvorecer (30)
 
 </button>
 
+
 <p>
-
-Ataque extremamente poderoso.
-
-Possui 20% de chance de errar.
-
+Grande dano.
+<br>
+20% de chance de errar.
 </p>
 
 
-<!-- Defesa -->
 
-<button id="btnDefender">
+
+
+<button id="btnSupremo"
+onclick="ataqueSupremoJogador();">
+
+💥 Aurora da Humanidade
+
+</button>
+
+
+<p>
+Consome 100 energia.
+<br>
+Uso único.
+</p>
+
+
+
+
+
+<button id="btnDefender"
+onclick="defender();">
 
 🛡 Defender
 
 </button>
 
+
 <p>
-
-Reduz o próximo dano recebido em 50%.
-
+Reduz o próximo dano recebido.
 </p>
 
 
-<!-- Poção -->
 
-<button id="btnPocao">
+
+
+<button id="btnPocao"
+onclick="usarPocao();">
 
 🧪 Usar Poção
 
 </button>
 
+
 <p>
-
-Recupera parte da vida.
-
+Recupera vida.
 </p>
 
 
-<!-- Supremo -->
-
-<button id="btnSupremo">
-
-💥 Ataque Supremo
-
-</button>
-
-<p>
-
-Disponível apenas quando a barra de energia estiver completa.
-
-</p>
 
 
-<!-- Fugir -->
 
-<button id="btnFugir">
+<button id="btnFugir"
+onclick="fugir();">
 
 🏃 Fugir
 
 </button>
 
-<p>
-
-Abandona imediatamente a batalha.
-
-</p>
 
 </div>
 
 
 
-<!-- ========================= -->
-<!-- TERMINAL -->
-<!-- ========================= -->
+
+
+
 
 <div class="terminal">
 
+
 <h2>
-
-📜 Terminal de Batalha
-
+📜 Batalha
 </h2>
 
-<div id="mensagens">
 
-Bem-vindo à batalha.
+<div id="mensagens"></div>
 
-</div>
 
 </div>
 
+
+
+
 </div>
+
 
 </section>
 
-<script src="script.js"></script>
+
+
+
+
+<script src="script.js" defer></script>
+
 
 </body>
 
