@@ -1332,55 +1332,43 @@ atualizarInterface();
 function fimJogo(){
 
 
-
 if(inimigo.vida<=0){
 
+    inimigo.vida=0;
 
-inimigo.vida=0;
+    jogoAtivo=false;
 
+    desativarBotoes();
 
-jogoAtivo=false;
+    escrever(
+        "🏆 Nêmesis Primordial foi derrotada!"
+    );
 
+    salvarBatalha(jogador.nome);
 
-desativarBotoes();
-
-
-
-escrever(
-"🏆 Nêmesis Primordial foi derrotada!"
-);
-
-
-
-return;
-
-
+    return;
 }
+
 
 
 
 
 if(jogador.vida<=0){
 
+    jogador.vida=0;
 
+    jogoAtivo=false;
 
-jogador.vida=0;
+    desativarBotoes();
 
+    escrever(
+        "☠ O Arauto caiu em batalha."
+    );
 
-jogoAtivo=false;
-
-
-desativarBotoes();
-
-
-
-escrever(
-"☠ O Arauto caiu em batalha."
-);
-
-
+    salvarBatalha(inimigo.nome);
 
 }
+
 
 
 
@@ -1390,6 +1378,42 @@ atualizarInterface();
 
 }
 
+async function salvarBatalha(vencedor){
+
+    const dados = {
+
+        jogador: jogador.nome,
+
+        inimigo: inimigo.nome,
+
+        vencedor: vencedor,
+
+        vidaJogador: jogador.vida,
+
+        vidaInimigo: inimigo.vida
+
+    };
+
+
+    const resposta = await fetch(
+        "http://localhost:1880/api/batalha",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(dados)
+        }
+    );
+
+
+    const resultado = await resposta.json();
+
+    console.log(resultado);
+
+}
 
 
 
