@@ -611,14 +611,17 @@ await escrever(
 
 if(ataque.efeito=="queimadura"){
 
+    inimigo.queimadura=3;
 
-inimigo.queimadura=3;
+    await enviarEfeito(
+        inimigo,
+        "queimadura",
+        3
+    );
 
-
-await escrever(
-"🔥 Nêmesis sofreu queimadura!"
-);
-
+    await escrever(
+        "🔥 Nêmesis sofreu queimadura!"
+    );
 
 }
 
@@ -694,7 +697,7 @@ finalizarTurnoJogador();
 
 
 
-function usarPocao(){
+async function usarPocao(){
 
 
 if(jogador.pocoes<=0){
@@ -709,6 +712,10 @@ return;
 
 jogador.pocoes--;
 
+await enviarItemUsado(
+    jogador,
+    "Poção"
+);
 
 jogador.vida+=35;
 
@@ -752,32 +759,120 @@ finalizarTurnoJogador();
 // TURNO INIMIGO
 // ==========================================
 
-
 async function turnoInimigo(){
 
+    if(!jogoAtivo)
+        return;
 
-if(!jogoAtivo)
-return;
+    await esperar(800);
 
 
+    // SUPREMO
 
-await esperar(800);
+    if(inimigo.energia >= 100){
 
-// SUPREMO
+        inimigo.energia = 0;
 
-if(inimigo.energia >= 100){
+        await escrever(
+            "💀 Nêmesis liberou: FIM DA CRIAÇÃO!"
+        );
 
-    inimigo.energia = 0;
+        let dano = calcularDano(
+            inimigo,
+            jogador,
+            ataquesInimigo.supremo.dano
+        );
+
+        causarDano(jogador,dano);
+
+        await escrever(
+            "💥 -" + dano + " HP"
+        );
+
+        atualizarInterface();
+
+        finalizarTurnoInimigo();
+
+        return;
+    }
+
+
+    // POÇÃO
+
+    if(inimigo.vida < 70 && inimigo.pocoes > 0){
+
+        inimigo.pocoes--;
+
+        await enviarItemUsado(
+            inimigo,
+            "Poção"
+        );
+
+        inimigo.vida += 35;
+
+        if(inimigo.vida > inimigo.vidaMaxima)
+            inimigo.vida = inimigo.vidaMaxima;
+
+        await escrever(
+            "🧪 Nêmesis usou uma poção."
+        );
+
+        atualizarInterface();
+
+        await esperar(1000);
+
+        finalizarTurnoInimigo();
+
+        return;
+    }
+
+
+    // DEFESA
+
+    if(Math.random() < 0.15){
+
+        inimigo.defesa = true;
+
+        await escrever(
+            "🛡 Nêmesis criou uma barreira!"
+        );
+
+        finalizarTurnoInimigo();
+
+        return;
+    }
+
+
+    // ATAQUE NORMAL
+
+    let lista = [
+
+        "colapso",
+        "eclipse",
+        "julgamento",
+        "aniquilacao"
+
+    ];
+
+
+    let tipo =
+        lista[
+            Math.floor(Math.random() * lista.length)
+        ];
+
+
+    let ataque = ataquesInimigo[tipo];
+
 
     await escrever(
-    "💀 Nêmesis liberou: FIM DA CRIAÇÃO!"
+        "🌑 Nêmesis usou " + ataque.nome
     );
 
 
     let dano = calcularDano(
         inimigo,
         jogador,
-        ataquesInimigo.supremo.dano
+        ataque.dano
     );
 
 
@@ -785,7 +880,24 @@ if(inimigo.energia >= 100){
 
 
     await escrever(
-    "💥 -" + dano + " HP"
+        "💥 -" + dano + " HP"
+    );
+
+
+    // GANHAR ENERGIA
+
+    inimigo.energia += ataque.energia;
+
+    if(inimigo.energia > inimigo.energiaMaxima){
+
+        inimigo.energia = inimigo.energiaMaxima;
+
+    }
+
+
+    await escrever(
+        "⚡ Nêmesis ganhou " + ataque.energia +
+        " energia. Total: " + inimigo.energia
     );
 
 
@@ -794,149 +906,11 @@ if(inimigo.energia >= 100){
 
     finalizarTurnoInimigo();
 
-    return;
 }
-
-// POÇÃO
-
-if(
-inimigo.vida<70 &&
-inimigo.pocoes>0 &&
-Math.random()<0.6
-){
-
-
-inimigo.pocoes--;
-
-
-inimigo.vida+=35;
-
-
-if(inimigo.vida>inimigo.vidaMaxima)
-
-inimigo.vida=inimigo.vidaMaxima;
-
-
-
-await escrever(
-"🧪 Nêmesis usou uma poção!"
-);
-
-
-
-finalizarTurnoInimigo();
-
-return;
-
-
-}
-
-
-
-
-// DEFESA
-
-if(Math.random()<0.15){
-
-
-inimigo.defesa=true;
-
-
-await escrever(
-"🛡 Nêmesis criou uma barreira!"
-);
-
-
-
-finalizarTurnoInimigo();
-
-return;
-
-
-}
-
-
-
-
-
-// ATAQUE NORMAL
-
-
-let lista=[
-
-"colapso",
-"eclipse",
-"julgamento",
-"aniquilacao"
-
-];
-
-
-
-let tipo=
-lista[
-Math.floor(Math.random()*lista.length)
-];
-
-
-
-let ataque=ataquesInimigo[tipo];
-
-
-
-await escrever(
-"🌑 Nêmesis usou "+ataque.nome
-);
-
-
-
-let dano=calcularDano(
-
-inimigo,
-
-jogador,
-
-ataque.dano
-
-);
-
-
-
-causarDano(jogador,dano);
-
-
-await escrever(
-"💥 -"+dano+" HP"
-);
-
-
-// GANHAR ENERGIA
-inimigo.energia += ataque.energia;
-
-if(inimigo.energia > inimigo.energiaMaxima){
-    inimigo.energia = inimigo.energiaMaxima;
-}
-
-
-await escrever(
-"⚡ Nêmesis ganhou " + ataque.energia + 
-" energia. Total: " + inimigo.energia
-);
-
-
-atualizarInterface();
-
-
-finalizarTurnoInimigo();
-
-
-}
-
-
-
 
 function finalizarTurnoJogador(){
 
+enviarStatusTurno();    
 
 turno="inimigo";
 
@@ -959,6 +933,7 @@ turnoInimigo,
 
 function finalizarTurnoInimigo(){
 
+enviarStatusTurno();
 
 turno="jogador";
 
@@ -1110,6 +1085,7 @@ await esperar(1200);
 
 async function iniciarBatalha(){
 
+await carregarPersonagens();
 
 esconderTelas();
 
@@ -1319,7 +1295,25 @@ atualizarInterface();
 
 }
 
+async function enviarEfeito(personagem, efeito, rounds){
 
+    await fetch("http://localhost:1880/api/efeito", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            personagem: personagem.nome,
+            efeito: efeito,
+            rounds: rounds
+        })
+
+    });
+
+}
 
 
 
@@ -1560,3 +1554,99 @@ atualizarInterface();
 
 
 };
+
+async function carregarPersonagens(){
+
+    const resposta = await fetch(
+        "http://localhost:1880/api/personagens"
+    );
+
+    const personagens = await resposta.json();
+
+    jogador.nome = personagens[0].nome;
+    jogador.vidaMaxima = personagens[0].hp;
+    jogador.vida = personagens[0].hp;
+
+    inimigo.nome = personagens[1].nome;
+    inimigo.vidaMaxima = personagens[1].hp;
+    inimigo.vida = personagens[1].hp;
+
+    jogador.pocoes = personagens[0].itens.length;
+    inimigo.pocoes = personagens[1].itens.length;
+
+}
+
+async function enviarStatusTurno(){
+
+    await fetch("http://localhost:1880/api/turno", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            jogador: jogador.nome,
+            vidaJogador: jogador.vida,
+
+            inimigo: inimigo.nome,
+            vidaInimigo: inimigo.vida
+
+        })
+
+    });
+
+};
+
+async function enviarEfeito(personagem, efeito, rounds){
+
+    await fetch("http://localhost:1880/api/efeito", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            personagem: personagem.nome,
+            efeito: efeito,
+            rounds: rounds
+        })
+
+    });
+
+};
+
+async function enviarItemUsado(personagem, item){
+
+    const resposta = await fetch(
+        "http://localhost:1880/api/item/usado",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                personagem: personagem.nome,
+                item: item
+            })
+        }
+    );
+
+    const resultado = await resposta.json();
+
+    if(resultado.sucesso){
+
+        personagem.pocoes = resultado.itens.length;
+
+        atualizarInterface();
+
+    }
+
+}
+
