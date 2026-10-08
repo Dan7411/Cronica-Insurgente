@@ -644,7 +644,7 @@ return;
 
 
 
-finalizarTurnoJogador();
+finalizarTurnoJogador("Ataque");
 
 
 
@@ -679,7 +679,7 @@ escrever(
 );
 
 
-finalizarTurnoJogador();
+finalizarTurnoJogador("Defesa");
 
 
 
@@ -744,7 +744,7 @@ escrever(
 
 
 
-finalizarTurnoJogador();
+finalizarTurnoJogador("Item");
 
 
 
@@ -791,7 +791,7 @@ async function turnoInimigo(){
 
         atualizarInterface();
 
-        finalizarTurnoInimigo();
+        finalizarTurnoInimigo("Supremo");
 
         return;
     }
@@ -821,7 +821,7 @@ async function turnoInimigo(){
 
         await esperar(1000);
 
-        finalizarTurnoInimigo();
+        finalizarTurnoInimigo("Item");
 
         return;
     }
@@ -837,7 +837,7 @@ async function turnoInimigo(){
             "🛡 Nêmesis criou uma barreira!"
         );
 
-        finalizarTurnoInimigo();
+        finalizarTurnoInimigo("Defesa");
 
         return;
     }
@@ -883,6 +883,7 @@ async function turnoInimigo(){
         "💥 -" + dano + " HP"
     );
 
+    finalizarTurnoInimigo("Ataque");
 
     // GANHAR ENERGIA
 
@@ -908,42 +909,33 @@ async function turnoInimigo(){
 
 }
 
-function finalizarTurnoJogador(){
+async function finalizarTurnoJogador(tipoAcao){
 
-enviarStatusTurno();    
+    await enviarStatusTurno(tipoAcao);
 
-turno="inimigo";
+    turno="inimigo";
 
+    textoTurno.innerHTML=
+    "Turno: "+inimigo.nome;
 
-textoTurno.innerHTML=
-"Turno: "+inimigo.nome;
-
-
-
-setTimeout(
-turnoInimigo,
-1000
-);
-
+    setTimeout(
+        turnoInimigo,
+        1000
+    );
 
 }
 
 
+async function finalizarTurnoInimigo(tipoAcao){
 
+    await enviarStatusTurno(tipoAcao);
 
-function finalizarTurnoInimigo(){
+    turno="jogador";
 
-enviarStatusTurno();
+    textoTurno.innerHTML=
+    "Turno: "+jogador.nome;
 
-turno="jogador";
-
-
-textoTurno.innerHTML=
-"Turno: "+jogador.nome;
-
-
-ativarBotoes();
-
+    ativarBotoes();
 
 }
 
@@ -1105,10 +1097,6 @@ mensagens.innerHTML="";
 jogoAtivo=true;
 
 
-
-jogador.vida=jogador.vidaMaxima;
-
-inimigo.vida=inimigo.vidaMaxima;
 
 
 
@@ -1558,25 +1546,54 @@ atualizarInterface();
 async function carregarPersonagens(){
 
     const resposta = await fetch(
-        "http://localhost:1880/api/personagens"
+        "http://localhost:1880/jogo/inicio/2"
     );
 
-    const personagens = await resposta.json();
+    const dados = await resposta.json();
 
-    jogador.nome = personagens[0].nome;
-    jogador.vidaMaxima = personagens[0].hp;
-    jogador.vida = personagens[0].hp;
+    // JOGADOR
 
-    inimigo.nome = personagens[1].nome;
-    inimigo.vidaMaxima = personagens[1].hp;
-    inimigo.vida = personagens[1].hp;
+    jogador.nome = dados.jogador.nome;
 
-    jogador.pocoes = personagens[0].itens.length;
-    inimigo.pocoes = personagens[1].itens.length;
+    jogador.vidaMaxima = dados.jogador.hpMaximo;
+
+    jogador.vida = dados.jogador.hpAtual;
+
+
+    // INIMIGO
+
+    inimigo.nome = dados.inimigo.nome;
+
+    inimigo.vidaMaxima = dados.inimigo.hpMaximo;
+
+    inimigo.vida = dados.inimigo.hpAtual;
+
+
+    // ITENS
+
+    jogador.itens = dados.jogador.itens;
+
+    inimigo.itens = dados.inimigo.itens;
+
+
+    // Quantidade de itens do jogador
+
+    jogador.pocoes = dados.jogador.itens.reduce(
+        (total, item) => total + item.quantidade,
+        0
+    );
+
+
+    // Quantidade de itens do inimigo
+
+    inimigo.pocoes = dados.inimigo.itens.reduce(
+        (total, item) => total + item.quantidade,
+        0
+    );
 
 }
 
-async function enviarStatusTurno(){
+async function enviarStatusTurno(tipoAcao){
 
     await fetch("http://localhost:1880/api/turno", {
 
@@ -1592,13 +1609,15 @@ async function enviarStatusTurno(){
             vidaJogador: jogador.vida,
 
             inimigo: inimigo.nome,
-            vidaInimigo: inimigo.vida
+            vidaInimigo: inimigo.vida,
+
+            tipoAcao: tipoAcao
 
         })
 
     });
 
-};
+}
 
 async function enviarEfeito(personagem, efeito, rounds){
 
@@ -1650,3 +1669,4 @@ async function enviarItemUsado(personagem, item){
 
 }
 
+let jogadorId = 2;

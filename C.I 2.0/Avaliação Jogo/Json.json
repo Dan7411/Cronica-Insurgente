@@ -1,0 +1,88 @@
+[
+  {
+    "nome": "Arauto da Rebelião",
+    "hp": 170,
+    "itens": [
+      {
+        "nome": "Poção",
+        "tipo": "Cura HP",
+        "valor": 35
+      }
+    ],
+    "ataques": [
+      {
+        "nome": "Ruína Celestial",
+        "tipo": "Normal",
+        "dano_base": 16,
+        "energia": 15
+      },
+      {
+        "nome": "Julgamento da Rebelião",
+        "tipo": "Queimadura",
+        "dano_base": 14,
+        "energia": 20
+      },
+      {
+        "nome": "Dilacerar o Destino",
+        "tipo": "Dano duplo",
+        "dano_base": 10,
+        "energia": 20
+      },
+      {
+        "nome": "Último Alvorecer",
+        "tipo": "Erro",
+        "dano_base": 30,
+        "energia": 35
+      },
+      {
+        "nome": "Aurora da Humanidade",
+        "tipo": "Supremo",
+        "dano_base": 55,
+        "energia": 100
+      }
+    ]
+  },
+  {
+    "nome": "Nêmesis Primordial",
+    "hp": 170,
+    "itens": [
+      {
+        "nome": "Poção",
+        "tipo": "Cura HP",
+        "valor": 35
+      }
+    ],
+    "ataques": [
+      {
+        "nome": "Colapso do Mundo",
+        "tipo": "Normal",
+        "dano_base": 18,
+        "energia": 15
+      },
+      {
+        "nome": "Eclipse Absoluto",
+        "tipo": "Dano duplo",
+        "dano_base": 11,
+        "energia": 20
+      },
+      {
+        "nome": "Julgamento Eterno",
+        "tipo": "Enfraquecer",
+        "dano_base": 14,
+        "energia": 20
+      },
+      {
+        "nome": "Aniquilação Primordial",
+        "tipo": "Erro",
+        "dano_base": 30,
+        "energia": 35
+      },
+      {
+        "nome": "Fim da Criação",
+        "tipo": "Supremo",
+        "dano_base": 60,
+        "energia": 100
+      }
+    ]
+  }
+]
