@@ -609,45 +609,61 @@ await escrever(
 
 
 
-if(ataque.efeito=="queimadura"){
 
-    inimigo.queimadura=3;
+if (ataque.efeito == "queimadura") {
 
-    await enviarEfeito(
-        inimigo,
-        "queimadura",
-        3
-    );
+    inimigo.queimadura = 3;
 
-    await escrever(
-        "🔥 Nêmesis sofreu queimadura!"
-    );
+    try {
+        await enviarEfeito(
+            inimigo,
+            "queimadura",
+            3
+        );
 
+        await escrever(
+            "🔥 Nêmesis sofreu queimadura!"
+        );
+
+    } catch (erro) {
+        console.error(
+            "Erro ao registrar a queimadura:",
+            erro
+        );
+
+        await escrever(
+            "⚠ A queimadura foi aplicada, mas não foi possível registrá-la no banco."
+        );
+    }
 }
 
 
 
-ganharEnergia(
-jogador,
-ataque.energia
-);
+  ganharEnergia(jogador, ataque.energia);
 
+  if (inimigo.vida <= 0) {
+    fimJogo();
+    return;
+  }
 
-
-if(inimigo.vida<=0){
-
-fimJogo();
-
-return;
-
+  await finalizarTurnoJogador("Ataque");
 }
 
 
 
-finalizarTurnoJogador("Ataque");
+async function finalizarTurnoJogador(tipoAcao) {
+  try {
+    await enviarStatusTurno(tipoAcao, jogador.nome);
+  } catch (erro) {
+    console.error("Erro ao salvar o turno:", erro);
+  }
 
+  turno = "inimigo";
+  textoTurno.innerHTML = "Turno: " + inimigo.nome;
 
-
+  setTimeout(() => {
+    turnoInimigo();
+  }, 1000);
 }
 
 
@@ -697,57 +713,39 @@ finalizarTurnoJogador("Defesa");
 
 
 
-async function usarPocao(){
 
+async function usarPocao() {
+    if (jogador.pocoes <= 0) {
+        escrever("❌ Sem poções.");
+        return;
+    }
 
-if(jogador.pocoes<=0){
+    try {
+        const resultado = await enviarItemUsado(
+            jogador,
+            "Poção"
+        );
 
-escrever("❌ Sem poções.");
+        jogador.pocoes = resultado.quantidade;
 
-return;
+        jogador.vida += 35;
 
-}
+        if (jogador.vida > jogador.vidaMaxima) {
+            jogador.vida = jogador.vidaMaxima;
+        }
 
+        ganharEnergia(jogador, 10);
 
+        atualizarInterface();
 
-jogador.pocoes--;
+        escrever("🧪 O Arauto recuperou vida.");
 
-await enviarItemUsado(
-    jogador,
-    "Poção"
-);
+        await finalizarTurnoJogador("Item");
 
-jogador.vida+=35;
-
-
-
-if(jogador.vida>jogador.vidaMaxima)
-
-jogador.vida=jogador.vidaMaxima;
-
-
-
-ganharEnergia(
-jogador,
-10
-);
-
-
-
-atualizarInterface();
-
-
-
-escrever(
-"🧪 O Arauto recuperou vida."
-);
-
-
-
-finalizarTurnoJogador("Item");
-
-
-
+    } catch (erro) {
+        escrever("❌ Não foi possível usar a poção.");
+        console.error(erro);
+    }
 }
 
 
@@ -759,17 +757,16 @@ finalizarTurnoJogador("Item");
 // TURNO INIMIGO
 // ==========================================
 
-async function turnoInimigo(){
 
-    if(!jogoAtivo)
+async function turnoInimigo() {
+
+    if (!jogoAtivo)
         return;
 
     await esperar(800);
 
-
     // SUPREMO
-
-    if(inimigo.energia >= 100){
+    if (inimigo.energia >= 100) {
 
         inimigo.energia = 0;
 
@@ -783,7 +780,7 @@ async function turnoInimigo(){
             ataquesInimigo.supremo.dano
         );
 
-        causarDano(jogador,dano);
+        causarDano(jogador, dano);
 
         await escrever(
             "💥 -" + dano + " HP"
@@ -791,26 +788,31 @@ async function turnoInimigo(){
 
         atualizarInterface();
 
-        finalizarTurnoInimigo("Supremo");
+        await finalizarTurnoInimigo("Supremo");
 
         return;
     }
 
-
     // POÇÃO
-
-    if(inimigo.vida < 70 && inimigo.pocoes > 0){
+    if (inimigo.vida < 70 && inimigo.pocoes > 0) {
 
         inimigo.pocoes--;
 
-        await enviarItemUsado(
-            inimigo,
-            "Poção"
-        );
+        try {
+            await enviarItemUsado(
+                inimigo,
+                "Poção"
+            );
+        } catch (erro) {
+            console.error(
+                "Erro ao registrar a poção do inimigo:",
+                erro
+            );
+        }
 
         inimigo.vida += 35;
 
-        if(inimigo.vida > inimigo.vidaMaxima)
+        if (inimigo.vida > inimigo.vidaMaxima)
             inimigo.vida = inimigo.vidaMaxima;
 
         await escrever(
@@ -821,15 +823,13 @@ async function turnoInimigo(){
 
         await esperar(1000);
 
-        finalizarTurnoInimigo("Item");
+        await finalizarTurnoInimigo("Item");
 
         return;
     }
 
-
     // DEFESA
-
-    if(Math.random() < 0.15){
+    if (Math.random() < 0.15) {
 
         inimigo.defesa = true;
 
@@ -837,37 +837,29 @@ async function turnoInimigo(){
             "🛡 Nêmesis criou uma barreira!"
         );
 
-        finalizarTurnoInimigo("Defesa");
+        await finalizarTurnoInimigo("Defesa");
 
         return;
     }
 
-
     // ATAQUE NORMAL
-
     let lista = [
-
         "colapso",
         "eclipse",
         "julgamento",
         "aniquilacao"
-
     ];
-
 
     let tipo =
         lista[
             Math.floor(Math.random() * lista.length)
         ];
 
-
     let ataque = ataquesInimigo[tipo];
-
 
     await escrever(
         "🌑 Nêmesis usou " + ataque.nome
     );
-
 
     let dano = calcularDano(
         inimigo,
@@ -875,68 +867,47 @@ async function turnoInimigo(){
         ataque.dano
     );
 
-
-    causarDano(jogador,dano);
-
+    causarDano(jogador, dano);
 
     await escrever(
         "💥 -" + dano + " HP"
     );
 
-    finalizarTurnoInimigo("Ataque");
-
     // GANHAR ENERGIA
-
     inimigo.energia += ataque.energia;
 
-    if(inimigo.energia > inimigo.energiaMaxima){
-
+    if (inimigo.energia > inimigo.energiaMaxima) {
         inimigo.energia = inimigo.energiaMaxima;
-
     }
-
 
     await escrever(
         "⚡ Nêmesis ganhou " + ataque.energia +
         " energia. Total: " + inimigo.energia
     );
 
-
     atualizarInterface();
 
-
-    finalizarTurnoInimigo();
-
-}
-
-async function finalizarTurnoJogador(tipoAcao){
-
-    await enviarStatusTurno(tipoAcao);
-
-    turno="inimigo";
-
-    textoTurno.innerHTML=
-    "Turno: "+inimigo.nome;
-
-    setTimeout(
-        turnoInimigo,
-        1000
-    );
-
+    // Salva o turno uma única vez, com as vidas atualizadas.
+    await finalizarTurnoInimigo("Ataque");
 }
 
 
-async function finalizarTurnoInimigo(tipoAcao){
 
-    await enviarStatusTurno(tipoAcao);
+async function finalizarTurnoInimigo(tipoAcao) {
 
-    turno="jogador";
+    try {
+        await enviarStatusTurno(
+            tipoAcao,
+            inimigo.nome
+        );
+    } catch (erro) {
+        console.error("Erro ao salvar turno do inimigo:", erro);
+    }
 
-    textoTurno.innerHTML=
-    "Turno: "+jogador.nome;
+    turno = "jogador";
+    textoTurno.innerHTML = "Turno: " + jogador.nome;
 
     ativarBotoes();
-
 }
 
 // ==========================================
@@ -1075,89 +1046,48 @@ await esperar(1200);
 // ==========================================
 
 
-async function iniciarBatalha(){
 
-await carregarPersonagens();
+async function iniciarBatalha() {
 
-esconderTelas();
+    // 1. Carrega os dados do banco de dados
+    try {
+        await carregarPersonagens();
+    } catch (erro) {
+        console.error("Não foi possível iniciar a batalha:", erro);
+        alert("Não foi possível carregar os personagens. Verifique o Node-RED e tente novamente.");
+        return;
+    }
 
+    // 2. Prepara a tela
+    esconderTelas();
+    jogo.classList.remove("escondido");
+    irParaTopo();
+    mensagens.innerHTML = "";
 
-jogo.classList.remove("escondido");
+    // 3. Ativa o jogo
+    jogoAtivo = true;
+    atualizarInterface();
 
+    // 4. Apresenta a batalha
+    await escrever("⚔ O destino do mundo será decidido.");
+    await escrever(jogador.nome + " VS " + inimigo.nome);
+    await escrever("A batalha começou!");
 
+    // 5. Sorteia quem começa
+    if (Math.random() < 0.5) {
 
-irParaTopo();
+        turno = "jogador";
+        textoTurno.innerHTML = "Turno: " + jogador.nome;
+        ativarBotoes();
 
+    } else {
 
+        turno = "inimigo";
+        textoTurno.innerHTML = "Turno: " + inimigo.nome;
+        desativarBotoes();
 
-mensagens.innerHTML="";
-
-
-
-jogoAtivo=true;
-
-
-
-
-
-atualizarInterface();
-
-
-
-await escrever(
-"⚔ O destino do mundo será decidido."
-);
-
-
-await escrever(
-jogador.nome+" VS "+inimigo.nome
-);
-
-
-await escrever(
-"A batalha começou!"
-);
-
-
-
-if(Math.random()<0.5){
-
-
-turno="jogador";
-
-
-textoTurno.innerHTML=
-"Turno: "+jogador.nome;
-
-
-ativarBotoes();
-
-
-}
-
-
-else{
-
-
-turno="inimigo";
-
-
-textoTurno.innerHTML=
-"Turno: "+inimigo.nome;
-
-
-desativarBotoes();
-
-
-setTimeout(
-turnoInimigo,
-1000
-);
-
-
-}
-
-
+        setTimeout(turnoInimigo, 1000);
+    }
 }
 
 
@@ -1283,24 +1213,26 @@ atualizarInterface();
 
 }
 
-async function enviarEfeito(personagem, efeito, rounds){
 
-    await fetch("http://localhost:1880/api/efeito", {
+async function enviarEfeito(personagem, efeito, rounds) {
+  const resposta = await fetch("http://localhost:1880/api/efeito", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      personagem: personagem.nome,
+      efeito: efeito,
+      rounds: rounds
+    }),
+    signal: AbortSignal.timeout(5000)
+  });
 
-        method: "POST",
+  if (!resposta.ok) {
+    throw new Error("Erro ao salvar efeito: " + resposta.status);
+  }
 
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            personagem: personagem.nome,
-            efeito: efeito,
-            rounds: rounds
-        })
-
-    });
-
+  return await resposta.json();
 }
 
 
@@ -1326,7 +1258,7 @@ if(inimigo.vida<=0){
         "🏆 Nêmesis Primordial foi derrotada!"
     );
 
-    salvarBatalha(jogador.nome);
+    salvarBatalha("Arauto da Rebelião");
 
     return;
 }
@@ -1376,6 +1308,7 @@ async function salvarBatalha(vencedor){
 
     };
 
+    console.log("Dados enviados ao finalizar a batalha:", dados);
 
     const resposta = await fetch(
         "http://localhost:1880/api/batalha",
@@ -1543,113 +1476,108 @@ atualizarInterface();
 
 };
 
-async function carregarPersonagens(){
+
+async function carregarPersonagens() {
+    try {
+        const resposta = await fetch(
+            "http://localhost:1880/jogo/inicio/2"
+        );
+
+        if (!resposta.ok) {
+            throw new Error("Não foi possível carregar os dados da partida.");
+        }
+
+        const dados = await resposta.json();
+
+        // JOGADOR
+        jogador.id = dados.jogador.id;
+        jogador.nome = "Arauto da Rebelião";
+        jogador.vidaMaxima = Number(dados.jogador.hpMaximo);
+        jogador.vida = Number(dados.jogador.hpAtual);
+        jogador.itens = dados.jogador.itens || [];
+
+        // INIMIGO
+        inimigo.id = dados.inimigo.id;
+        inimigo.nome = dados.inimigo.nome;
+        inimigo.vidaMaxima = Number(dados.inimigo.hpMaximo);
+        inimigo.vida = Number(dados.inimigo.hpAtual);
+        inimigo.itens = dados.inimigo.itens || [];
+
+        // QUANTIDADE DE POÇÕES DO JOGADOR
+        jogador.pocoes = jogador.itens.reduce(
+            (total, item) => {
+                if (item.nome === "Poção") {
+                    return total + Number(item.quantidade);
+                }
+
+                return total;
+            },
+            0
+        );
+
+        // QUANTIDADE DE POÇÕES DO INIMIGO
+        inimigo.pocoes = inimigo.itens.reduce(
+            (total, item) => {
+                if (item.nome === "Poção") {
+                    return total + Number(item.quantidade);
+                }
+
+                return total;
+            },
+            0
+        );
+
+        atualizarInterface();
+
+        console.log("Personagens carregados:", dados);
+
+    } catch (erro) {
+        console.error("Erro ao carregar personagens:", erro);
+        throw erro;
+    }
+}
+
+
+async function enviarStatusTurno(tipoAcao, combatenteAtivo) {
 
     const resposta = await fetch(
-        "http://localhost:1880/jogo/inicio/2"
+        "http://localhost:1880/api/turno",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                jogador: combatenteAtivo,
+                vidaJogador: jogador.vida,
+                inimigo: inimigo.nome,
+                vidaInimigo: inimigo.vida,
+                tipoAcao: tipoAcao
+            })
+        }
     );
 
-    const dados = await resposta.json();
+    if (!resposta.ok) {
+        throw new Error(
+            "Erro ao salvar o turno: " + resposta.status
+        );
+    }
 
-    // JOGADOR
-
-    jogador.nome = dados.jogador.nome;
-
-    jogador.vidaMaxima = dados.jogador.hpMaximo;
-
-    jogador.vida = dados.jogador.hpAtual;
-
-
-    // INIMIGO
-
-    inimigo.nome = dados.inimigo.nome;
-
-    inimigo.vidaMaxima = dados.inimigo.hpMaximo;
-
-    inimigo.vida = dados.inimigo.hpAtual;
-
-
-    // ITENS
-
-    jogador.itens = dados.jogador.itens;
-
-    inimigo.itens = dados.inimigo.itens;
-
-
-    // Quantidade de itens do jogador
-
-    jogador.pocoes = dados.jogador.itens.reduce(
-        (total, item) => total + item.quantidade,
-        0
-    );
-
-
-    // Quantidade de itens do inimigo
-
-    inimigo.pocoes = dados.inimigo.itens.reduce(
-        (total, item) => total + item.quantidade,
-        0
-    );
-
+    return await resposta.json();
 }
 
-async function enviarStatusTurno(tipoAcao){
 
-    await fetch("http://localhost:1880/api/turno", {
 
-        method: "POST",
 
-        headers: {
-            "Content-Type": "application/json"
-        },
 
-        body: JSON.stringify({
-
-            jogador: jogador.nome,
-            vidaJogador: jogador.vida,
-
-            inimigo: inimigo.nome,
-            vidaInimigo: inimigo.vida,
-
-            tipoAcao: tipoAcao
-
-        })
-
-    });
-
-}
-
-async function enviarEfeito(personagem, efeito, rounds){
-
-    await fetch("http://localhost:1880/api/efeito", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            personagem: personagem.nome,
-            efeito: efeito,
-            rounds: rounds
-        })
-
-    });
-
-};
-
-async function enviarItemUsado(personagem, item){
-
+async function enviarItemUsado(personagem, item) {
     const resposta = await fetch(
         "http://localhost:1880/api/item/usado",
         {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
-
             body: JSON.stringify({
                 personagem: personagem.nome,
                 item: item
@@ -1659,14 +1587,13 @@ async function enviarItemUsado(personagem, item){
 
     const resultado = await resposta.json();
 
-    if(resultado.sucesso){
-
-        personagem.pocoes = resultado.itens.length;
-
-        atualizarInterface();
-
+    if (!resposta.ok || !resultado.sucesso) {
+        throw new Error(
+            resultado.mensagem || "Não foi possível usar o item."
+        );
     }
 
+    return resultado;
 }
 
-let jogadorId = 2;
+
