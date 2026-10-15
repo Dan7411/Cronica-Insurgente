@@ -641,12 +641,23 @@ if (ataque.efeito == "queimadura") {
 
   ganharEnergia(jogador, ataque.energia);
 
-  if (inimigo.vida <= 0) {
+  
+if (inimigo.vida <= 0) {
+    try {
+        await enviarStatusTurno("Ataque", jogador.nome);
+    } catch (erro) {
+        console.error(
+            "Erro ao salvar o ataque final:",
+            erro
+        );
+    }
+
     fimJogo();
     return;
-  }
+}
 
-  await finalizarTurnoJogador("Ataque");
+await finalizarTurnoJogador("Ataque");
+
 }
 
 
@@ -714,6 +725,7 @@ finalizarTurnoJogador("Defesa");
 
 
 
+
 async function usarPocao() {
     if (jogador.pocoes <= 0) {
         escrever("❌ Sem poções.");
@@ -725,6 +737,11 @@ async function usarPocao() {
             jogador,
             "Poção"
         );
+
+        if (!resultado || resultado.sucesso !== true) {
+            escrever("❌ Não foi possível remover a poção do inventário.");
+            return;
+        }
 
         jogador.pocoes = resultado.quantidade;
 
@@ -738,15 +755,16 @@ async function usarPocao() {
 
         atualizarInterface();
 
-        escrever("🧪 O Arauto recuperou vida.");
+        await escrever("🧪 O Arauto recuperou vida.");
 
         await finalizarTurnoJogador("Item");
 
     } catch (erro) {
         escrever("❌ Não foi possível usar a poção.");
-        console.error(erro);
+        console.error("Erro ao usar poção:", erro);
     }
 }
+
 
 
 
@@ -764,6 +782,20 @@ async function turnoInimigo() {
         return;
 
     await esperar(800);
+
+    
+    // EFEITO PERSISTENTE: QUEIMADURA
+    if (inimigo.queimadura > 0) {
+
+        await aplicarEfeitos(inimigo);
+
+        if (inimigo.vida <= 0) {
+            fimJogo();
+            return;
+        }
+    }
+
+
 
     // SUPREMO
     if (inimigo.energia >= 100) {
@@ -1101,73 +1133,59 @@ async function iniciarBatalha() {
 // ==========================================
 
 
-async function ataqueSupremoJogador(){
 
+async function ataqueSupremoJogador() {
 
+    if (!jogoAtivo || turno !== "jogador") {
+        return;
+    }
 
-if(jogador.energia<100){
+    if (jogador.energia < 100) {
+        await escrever("⚡ Energia insuficiente.");
+        return;
+    }
 
-escrever(
-"⚡ Energia insuficiente."
-);
+    if (jogador.supremoUsado) {
+        await escrever("❌ Supremo já utilizado.");
+        return;
+    }
 
-return;
+    desativarBotoes();
 
+    jogador.supremoUsado = true;
+    jogador.energia = 0;
+
+    await escrever("☀ AURORA DA HUMANIDADE!");
+
+    let dano = calcularDano(
+        jogador,
+        inimigo,
+        ataquesJogador.supremo.dano
+    );
+
+    causarDano(inimigo, dano);
+
+    await escrever("💥 -" + dano + " HP");
+
+    ganharEnergia(jogador, 0);
+
+    if (inimigo.vida <= 0) {
+        try {
+            await enviarStatusTurno("Supremo", jogador.nome);
+        } catch (erro) {
+            console.error(
+                "Erro ao salvar o supremo final:",
+                erro
+            );
+        }
+
+        fimJogo();
+        return;
+    }
+
+    await finalizarTurnoJogador("Supremo");
 }
 
-
-
-if(jogador.supremoUsado){
-
-escrever(
-"❌ Supremo já utilizado."
-);
-
-return;
-
-}
-
-
-
-jogador.supremoUsado=true;
-
-jogador.energia=0;
-
-
-
-await escrever(
-"☀ AURORA DA HUMANIDADE!"
-);
-
-
-
-let dano=
-calcularDano(
-jogador,
-inimigo,
-ataquesJogador.supremo.dano
-);
-
-
-
-causarDano(
-inimigo,
-dano
-);
-
-
-
-await escrever(
-"💥 -"+dano+" HP"
-);
-
-
-
-fimJogo();
-
-
-
-}
 
 
 
@@ -1180,38 +1198,41 @@ fimJogo();
 // ==========================================
 
 
-function aplicarEfeitos(p){
 
 
+async function aplicarEfeitos(p) {
 
-if(p.queimadura>0){
+    if (p.queimadura > 0) {
 
+        p.queimadura--;
 
-p.queimadura--;
+        p.vida -= 6;
 
+        if (p.vida < 0) {
+            p.vida = 0;
+        }
 
-p.vida-=6;
+        await escrever(
+            "🔥 Queimadura causou 6 de dano em " +
+            p.nome + "!"
+        );
 
+        atualizarInterface();
 
-escrever(
-"🔥 Queimadura causou 6 dano."
-);
-
-
+        try {
+            await enviarStatusTurno("Efeito", p.nome);
+        } catch (erro) {
+            console.error(
+                "Erro ao registrar o dano da queimadura:",
+                erro
+            );
+        }
+    }
 }
 
 
 
-if(p.vida<0)
 
-p.vida=0;
-
-
-
-atualizarInterface();
-
-
-}
 
 
 async function enviarEfeito(personagem, efeito, rounds) {
@@ -1255,7 +1276,7 @@ if(inimigo.vida<=0){
     desativarBotoes();
 
     escrever(
-        "🏆 Nêmesis Primordial foi derrotada!"
+        "🏆 Nêmesis Primordial foi derrotado!"
     );
 
     salvarBatalha("Arauto da Rebelião");
@@ -1477,6 +1498,7 @@ atualizarInterface();
 };
 
 
+
 async function carregarPersonagens() {
     try {
         const resposta = await fetch(
@@ -1484,14 +1506,16 @@ async function carregarPersonagens() {
         );
 
         if (!resposta.ok) {
-            throw new Error("Não foi possível carregar os dados da partida.");
+            throw new Error(
+                "Não foi possível carregar os dados da partida."
+            );
         }
 
         const dados = await resposta.json();
 
         // JOGADOR
         jogador.id = dados.jogador.id;
-        jogador.nome = "Arauto da Rebelião";
+        jogador.nome = dados.jogador.nome;
         jogador.vidaMaxima = Number(dados.jogador.hpMaximo);
         jogador.vida = Number(dados.jogador.hpAtual);
         jogador.itens = dados.jogador.itens || [];
@@ -1538,7 +1562,12 @@ async function carregarPersonagens() {
 }
 
 
+
+
+
 async function enviarStatusTurno(tipoAcao, combatenteAtivo) {
+    const personagemComEfeito =
+        combatenteAtivo === jogador.nome ? jogador : inimigo;
 
     const resposta = await fetch(
         "http://localhost:1880/api/turno",
@@ -1548,11 +1577,22 @@ async function enviarStatusTurno(tipoAcao, combatenteAtivo) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                jogador: combatenteAtivo,
+                jogador: jogador.nome,
                 vidaJogador: jogador.vida,
                 inimigo: inimigo.nome,
                 vidaInimigo: inimigo.vida,
-                tipoAcao: tipoAcao
+                combatenteAtivo: combatenteAtivo,
+                tipoAcao: tipoAcao,
+                efeitoPersistente:
+                    tipoAcao === "Efeito" ? "queimadura" : null,
+                alvoDanoPersistente:
+                    tipoAcao === "Efeito"
+                        ? personagemComEfeito.nome
+                        : null,
+                duracaoDanoPersistente:
+                    tipoAcao === "Efeito"
+                        ? personagemComEfeito.queimadura
+                        : null
             })
         }
     );
@@ -1565,6 +1605,7 @@ async function enviarStatusTurno(tipoAcao, combatenteAtivo) {
 
     return await resposta.json();
 }
+
 
 
 
