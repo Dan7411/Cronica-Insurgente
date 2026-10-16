@@ -8,6 +8,7 @@
 // VARIÁVEIS GLOBAIS
 // ==========================================
 
+let partidaId = null;
 let jogoAtivo = false;
 let turno = "";
 
@@ -54,7 +55,8 @@ const jogador = {
 
     criticoBonus:0,
 
-    supremoUsado:false
+    supremoUsado: false,
+    energiaBloqueada: false
 
 };
 
@@ -80,7 +82,8 @@ const inimigo = {
 
     criticoBonus:10,
 
-    supremoUsado:false
+    supremoUsado: false,
+    energiaBloqueada: false
 
 };
 
@@ -299,25 +302,32 @@ function irParaTopo(){
 
 
 
-async function escrever(texto){
 
-    const linha=document.createElement("p");
 
+async function escrever(texto) {
+    const linha = document.createElement("p");
+
+    linha.textContent = "";
     mensagens.appendChild(linha);
 
-
-    for(let letra of texto){
-
-        linha.innerHTML+=letra;
-
+    // Efeito de escrita
+    for (let letra of texto) {
+        linha.textContent += letra;
         await esperar(velocidadeTexto);
-
     }
 
+    // Quando o quadro ficar cheio, mantém só as 4 últimas
+    if (mensagens.scrollHeight > mensagens.clientHeight) {
+        while (mensagens.children.length > 4) {
+            mensagens.removeChild(mensagens.firstElementChild);
+        }
+    }
 
-    mensagens.scrollTop=mensagens.scrollHeight;
-
+    // Posiciona o histórico
+    mensagens.scrollTop = 0;
 }
+
+
 
 
 
@@ -498,17 +508,15 @@ function causarDano(alvo,dano){
 
 
 
-
 function ganharEnergia(personagem, quantidade) {
+    if (personagem.energiaBloqueada) return;
 
-    personagem.energia += quantidade;
-
-    if(personagem.energia > personagem.energiaMaxima){
-        personagem.energia = personagem.energiaMaxima;
-    }
+    personagem.energia = Math.min(
+        personagem.energia + quantidade,
+        personagem.energiaMaxima
+    );
 
     atualizarInterface();
-
 }
 
 
@@ -801,6 +809,8 @@ async function turnoInimigo() {
     if (inimigo.energia >= 100) {
 
         inimigo.energia = 0;
+        inimigo.energiaBloqueada = true;
+        inimigo.supremoUsado = true;
 
         await escrever(
             "💀 Nêmesis liberou: FIM DA CRIAÇÃO!"
@@ -994,48 +1004,46 @@ const sinopse=[
 
 
 
-async function mostrarHistoria(){
 
 
-esconderTelas();
+async function mostrarHistoria() {
+  esconderTelas();
+  historia.classList.remove("escondido");
+  irParaTopo();
+
+  textoHistoria.innerHTML = "";
+
+  for (let frase of introducao) {
+    textoHistoria.innerHTML += "<p>" + frase + "</p>";
+    await esperar(1200);
+  }
+
+  textoHistoria.innerHTML += "<hr>";
+
+  for (let frase of sinopse) {
+    textoHistoria.innerHTML += "<p>" + frase + "</p>";
+    await esperar(1200);
+  }
+
+  await esperar(1000);
+  iniciarBatalha();
+}
 
 
-historia.classList.remove("escondido");
+function mostrarSinopse() {
+  esconderTelas();
+  historia.classList.remove("escondido");
+  irParaTopo();
 
+  textoHistoria.innerHTML = "";
 
-irParaTopo();
-
-
-textoHistoria.innerHTML="";
-
-
-
-for(let frase of introducao){
-
-textoHistoria.innerHTML+=
-"<p>"+frase+"</p>";
-
-await esperar(1200);
-
+   for (let frase of sinopse) {
+    textoHistoria.innerHTML += "<p>" + frase + "</p>";
+  }
 }
 
 
 
-textoHistoria.innerHTML+="<hr>";
-
-
-
-for(let frase of sinopse){
-
-textoHistoria.innerHTML+=
-"<p>"+frase+"</p>";
-
-await esperar(1200);
-
-}
-
-
-}
 
 
 
@@ -1105,21 +1113,23 @@ async function iniciarBatalha() {
     await escrever(jogador.nome + " VS " + inimigo.nome);
     await escrever("A batalha começou!");
 
+    
     // 5. Sorteia quem começa
-    if (Math.random() < 0.5) {
+    desativarBotoes();
 
+    if (Math.random() < 0.5) {
         turno = "jogador";
         textoTurno.innerHTML = "Turno: " + jogador.nome;
         ativarBotoes();
-
     } else {
-
         turno = "inimigo";
         textoTurno.innerHTML = "Turno: " + inimigo.nome;
-        desativarBotoes();
 
-        setTimeout(turnoInimigo, 1000);
+        setTimeout(() => {
+            turnoInimigo();
+        }, 1000);
     }
+
 }
 
 
@@ -1154,6 +1164,7 @@ async function ataqueSupremoJogador() {
 
     jogador.supremoUsado = true;
     jogador.energia = 0;
+    jogador.energiaBloqueada = true;
 
     await escrever("☀ AURORA DA HUMANIDADE!");
 
@@ -1235,6 +1246,7 @@ async function aplicarEfeitos(p) {
 
 
 
+
 async function enviarEfeito(personagem, efeito, rounds) {
   const resposta = await fetch("http://localhost:1880/api/efeito", {
     method: "POST",
@@ -1242,11 +1254,12 @@ async function enviarEfeito(personagem, efeito, rounds) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
+      partidaId: Number(partidaId),
       personagem: personagem.nome,
       efeito: efeito,
       rounds: rounds
     }),
-    signal: AbortSignal.timeout(5000)
+    signal: AbortSignal.timeout(10000)
   });
 
   if (!resposta.ok) {
@@ -1255,6 +1268,7 @@ async function enviarEfeito(personagem, efeito, rounds) {
 
   return await resposta.json();
 }
+
 
 
 
@@ -1313,43 +1327,50 @@ atualizarInterface();
 
 }
 
-async function salvarBatalha(vencedor){
 
+async function salvarBatalha(vencedor) {
     const dados = {
-
+        partidaId: Number(partidaId),
         jogador: jogador.nome,
-
         inimigo: inimigo.nome,
-
         vencedor: vencedor,
-
         vidaJogador: jogador.vida,
-
         vidaInimigo: inimigo.vida
-
     };
 
-    console.log("Dados enviados ao finalizar a batalha:", dados);
+    if (!Number.isInteger(dados.partidaId) || dados.partidaId <= 0) {
+        console.error("ID da partida inválido:", partidaId);
+        return;
+    }
 
-    const resposta = await fetch(
-        "http://localhost:1880/api/batalha",
-        {
-            method: "POST",
+    try {
+        console.log("Dados enviados ao finalizar a batalha:", dados);
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        const resposta = await fetch(
+            "http://localhost:1880/api/batalha",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dados)
+            }
+        );
 
-            body: JSON.stringify(dados)
+        const resultado = await resposta.json();
+
+        if (!resposta.ok || !resultado.sucesso) {
+            console.error("Erro ao finalizar a partida:", resultado);
+            return;
         }
-    );
 
+        console.log("Partida finalizada com sucesso:", resultado);
 
-    const resultado = await resposta.json();
-
-    console.log(resultado);
-
+    } catch (erro) {
+        console.error("Erro ao comunicar com o Node-RED:", erro);
+    }
 }
+
 
 
 
@@ -1483,6 +1504,10 @@ document
 .onclick=
 usarPocao;
 
+document
+.getElementById("btnFugir")
+.onclick = fugirBatalha;
+
 
 
 esconderTelas();
@@ -1512,6 +1537,10 @@ async function carregarPersonagens() {
         }
 
         const dados = await resposta.json();
+        partidaId = Number(dados.partidaId);
+        if (!Number.isInteger(partidaId) || partidaId <= 0) {
+          throw new Error("O ID da partida não foi recebido corretamente.");
+        }
 
         // JOGADOR
         jogador.id = dados.jogador.id;
@@ -1565,6 +1594,7 @@ async function carregarPersonagens() {
 
 
 
+
 async function enviarStatusTurno(tipoAcao, combatenteAtivo) {
     const personagemComEfeito =
         combatenteAtivo === jogador.nome ? jogador : inimigo;
@@ -1577,18 +1607,27 @@ async function enviarStatusTurno(tipoAcao, combatenteAtivo) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                partidaId: Number(partidaId),
+                jogadorId: Number(jogador.id),
+                oponenteId: Number(inimigo.id),
+
                 jogador: jogador.nome,
                 vidaJogador: jogador.vida,
+
                 inimigo: inimigo.nome,
                 vidaInimigo: inimigo.vida,
+
                 combatenteAtivo: combatenteAtivo,
                 tipoAcao: tipoAcao,
+
                 efeitoPersistente:
                     tipoAcao === "Efeito" ? "queimadura" : null,
+
                 alvoDanoPersistente:
                     tipoAcao === "Efeito"
                         ? personagemComEfeito.nome
                         : null,
+
                 duracaoDanoPersistente:
                     tipoAcao === "Efeito"
                         ? personagemComEfeito.queimadura
@@ -1605,6 +1644,7 @@ async function enviarStatusTurno(tipoAcao, combatenteAtivo) {
 
     return await resposta.json();
 }
+
 
 
 
@@ -1637,4 +1677,27 @@ async function enviarItemUsado(personagem, item) {
     return resultado;
 }
 
+
+
+async function fugir() {
+    if (!jogoAtivo || turno !== "jogador") {
+        return;
+    }
+
+    desativarBotoes();
+
+    await escrever("🏃 O Arauto da Rebelião fugiu da batalha!");
+
+    jogoAtivo = false;
+    turno = "";
+
+    textoTurno.innerHTML = "Batalha encerrada";
+
+    await escrever("Você voltou ao menu principal.");
+
+    esconderTelas();
+    menu.classList.remove("escondido");
+
+    irParaTopo();
+}
 

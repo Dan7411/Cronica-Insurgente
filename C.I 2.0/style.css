@@ -1,681 +1,895 @@
-/* ================================= */
-/* CONFIGURAÇÕES GERAIS */
-/* ================================= */
+/* =========================================
+   CRÔNICA INSURGENTE — DARK FANTASY
+========================================= */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+:root {
+    --fundo: #08090d;
+    --painel: #11131a;
+    --painel-claro: #191c25;
+    --borda: #343744;
+    --dourado: #e8bd59;
+    --dourado-claro: #ffe6a0;
+    --vermelho: #d93645;
+    --verde: #39d98a;
+    --azul: #55b9ff;
+    --texto: #f4f4f6;
+    --texto-suave: #a7aab7;
 }
 
-
-html{
-
-    overflow-y:auto;
-    scroll-behavior:smooth;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
+html {
+    scroll-behavior: smooth;
+    overflow-y: auto;
+}
 
-body{
-
+body {
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    color: var(--texto);
     background:
-    radial-gradient(circle at top,#252000,#090909 50%);
-
-    color:white;
-
-    min-height:100vh;
-
-    width:100%;
-
-    overflow-x:hidden;
-
+        radial-gradient(ellipse at 50% 0%, #29200f 0%, transparent 45%),
+        radial-gradient(ellipse at 100% 100%, #210d14 0%, transparent 35%),
+        var(--fundo);
 }
 
-
-
-.escondido{
-
-    display:none !important;
-
+.escondido {
+    display: none !important;
 }
 
+/* TELAS E PAINÉIS */
 
-
-/* ================================= */
-/* TELAS */
-/* ================================= */
-
-
-.tela{
-
-    min-height:100vh;
-
-    width:100%;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:40px;
-
+.tela {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(16px, 4vw, 40px);
 }
-
-
-
 
 .painel-menu,
-.painel-historia{
-
-
-    width:600px;
-
-    max-width:100%;
-
-
-    background:
-
-    linear-gradient(
-        145deg,
-        #202020,
-        #0c0c0c
-    );
-
-
-    border:2px solid #555;
-
-    border-radius:20px;
-
-    padding:40px;
-
-    text-align:center;
-
-
-    box-shadow:
-
-    0 0 30px #000;
-
-
+.painel-historia {
+    width: 600px;
+    max-width: 100%;
+    padding: clamp(22px, 5vw, 42px);
+    text-align: center;
+    background: linear-gradient(145deg, #1c1e27, #0c0d12);
+    border: 1px solid #50452e;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px #0009, 0 0 35px #e8bd590a;
+    animation: aparecer .6s ease both;
 }
 
+/* TÍTULOS E TEXTOS */
 
-
-/* ================================= */
-/* TÍTULOS */
-/* ================================= */
-
-
-h1{
-
-    color:#ffd700;
-
-    font-size:48px;
-
-    letter-spacing:3px;
-
-    margin-bottom:20px;
-
-    text-align:center;
-
-
-    text-shadow:
-
-    0 0 10px gold,
-
-    0 0 30px orange;
-
+h1 {
+    color: var(--dourado-claro);
+    font-size: clamp(28px, 5vw, 48px);
+    letter-spacing: clamp(1px, .4vw, 4px);
+    line-height: 1.2;
+    margin-bottom: 22px;
+    text-align: center;
+    text-shadow: 0 0 22px #e8bd5933;
 }
 
-
-
-h2{
-
-    color:#ffd54a;
-
-    margin-bottom:15px;
-
+h2 {
+    color: var(--dourado);
+    margin-bottom: 15px;
+    line-height: 1.3;
 }
 
-
-
-p{
-
-    margin:10px 0;
-
-    line-height:1.5;
-
+p {
+    margin: 10px 0;
+    line-height: 1.7;
+    color: #d3d4dc;
 }
 
-
-
-
-
-/* ================================= */
 /* BOTÕES */
-/* ================================= */
 
-
-button{
-
-
-    width:100%;
-
-    padding:13px;
-
-    margin-top:10px;
-
-
-    background:#202020;
-
-
-    color:white;
-
-
-    border:2px solid #555;
-
-
-    border-radius:10px;
-
-
-    font-size:16px;
-
-
-    cursor:pointer;
-
-
-    transition:.25s;
-
-
+button {
+    width: 100%;
+    padding: 13px 16px;
+    margin-top: 10px;
+    color: var(--texto);
+    background: linear-gradient(145deg, #222530, #151720);
+    border: 1px solid #454958;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease,
+                background .2s ease, box-shadow .2s ease;
 }
 
-
-
-button:hover{
-
-
-    background:#333;
-
-    border-color:#ffd700;
-
-    transform:scale(1.03);
-
-
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: var(--dourado);
+    background: linear-gradient(145deg, #302b20, #1b1b20);
+    box-shadow: 0 5px 20px #e8bd5912;
 }
 
-
-
-button:disabled{
-
-    opacity:.4;
-
-    cursor:not-allowed;
-
+button:active:not(:disabled) {
+    transform: scale(.98);
 }
 
-
-
-
-
-/* ================================= */
-/* JOGO */
-/* ================================= */
-
-
-#jogo{
-
-    width:100%;
-
-    padding:30px;
-
+button:focus-visible {
+    outline: 2px solid var(--dourado);
+    outline-offset: 3px;
 }
 
-
-
-
-
-/* ================================= */
-/* STATUS */
-/* ================================= */
-
-
-.status{
-
-
-    display:flex;
-
-    gap:25px;
-
-    width:100%;
-
-    margin:30px 0;
-
-
+button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+    transform: none;
 }
 
+/* ÁREA DO JOGO */
 
-
-.personagem{
-
-
-    flex:1;
-
-
-    background:
-
-    linear-gradient(
-        145deg,
-        #202020,
-        #111
-    );
-
-
-    border:2px solid #555;
-
-    border-radius:15px;
-
-    padding:20px;
-
-
-    box-shadow:
-
-    0 0 20px #000;
-
-
+#jogo {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: clamp(14px, 3vw, 32px);
 }
 
+/* PAINÉIS DOS PERSONAGENS */
 
-
-.jogador{
-
-    border-color:#227722;
-
+.status {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin: 26px 0;
 }
 
-
-
-.inimigo{
-
-    border-color:#990000;
-
-
-    box-shadow:
-
-    0 0 25px rgba(255,0,0,.25);
-
-
+.personagem {
+    flex: 1;
+    min-width: 0;
+    padding: clamp(16px, 2.5vw, 24px);
+    background: linear-gradient(145deg, #1b1e28, #101117);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px #0004;
+    transition: border-color .25s ease, box-shadow .25s ease;
 }
 
+.jogador {
+    border-color: #27664c;
+    box-shadow: inset 0 1px #39d98a12, 0 12px 30px #0004;
+}
 
+.inimigo {
+    border-color: #79303a;
+    box-shadow: inset 0 1px #d9364512, 0 12px 30px #0004;
+}
 
-
-
-/* ================================= */
-/* BARRAS */
-/* ================================= */
-
+/* BARRAS DE VIDA E ENERGIA */
 
 .barraVida,
-.barraEnergia{
-
-
-    width:100%;
-
-    height:22px;
-
-    background:#333;
-
-    border-radius:15px;
-
-    overflow:hidden;
-
-    margin:10px 0;
-
-
+.barraEnergia {
+    width: 100%;
+    height: 16px;
+    margin: 10px 0 14px;
+    overflow: hidden;
+    background: #292c36;
+    border: 1px solid #ffffff0b;
+    border-radius: 20px;
 }
 
-
-
-#barraJogador{
-
-
-    height:100%;
-
-
-    background:
-
-    linear-gradient(
-        90deg,
-        #00aa00,
-        #7fff7f
-    );
-
-
-    transition:width .5s ease;
-
-
+#barraJogador,
+#barraInimigo,
+#energiaJogadorBarra,
+#energiaInimigoBarra {
+    height: 100%;
+    border-radius: inherit;
+    transition: width .45s ease;
 }
 
-
-
-#barraInimigo{
-
-
-    height:100%;
-
-
-    background:
-
-    linear-gradient(
-        90deg,
-        #800000,
-        #ff2222
-    );
-
-
-    transition:width .5s ease;
-
-
+#barraJogador {
+    background: linear-gradient(90deg, #168b55, #50ed9c);
+    box-shadow: 0 0 12px #39d98a35;
 }
 
-
+#barraInimigo {
+    background: linear-gradient(90deg, #941e30, #fa5260);
+    box-shadow: 0 0 12px #d9364535;
+}
 
 #energiaJogadorBarra,
-#energiaInimigoBarra{
-
-
-    height:100%;
-
-
-    background:
-
-    linear-gradient(
-        90deg,
-        #0066ff,
-        #66ddff
-    );
-
-
-    transition:width .5s ease;
-
-
+#energiaInimigoBarra {
+    background: linear-gradient(90deg, #1766c2, #66caff);
+    box-shadow: 0 0 12px #55b9ff30;
 }
 
+/* EFEITOS DE ESTADO */
 
-
-
-/* ================================= */
-/* EFEITOS */
-/* ================================= */
-
-
-.efeitos{
-
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:8px;
-
-    margin-top:15px;
-
-
+.efeitos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
 }
 
-
-
-.efeito{
-
-
-    background:#333;
-
-
-    padding:6px 10px;
-
-
-    border-radius:20px;
-
-
-    font-size:13px;
-
-
+.efeito {
+    padding: 6px 11px;
+    color: #f2dba5;
+    background: #e8bd5910;
+    border: 1px solid #e8bd593d;
+    border-radius: 20px;
+    font-size: 12px;
 }
 
+/* LAYOUT DA BATALHA */
 
-
-
-
-/* ================================= */
-/* BATALHA */
-/* ================================= */
-
-
-.batalha{
-
-
-    display:grid;
-
-
-    grid-template-columns:35% 65%;
-
-
-    gap:20px;
-
-
+.batalha {
+    display: grid;
+    grid-template-columns: minmax(260px, .8fr) minmax(0, 1.5fr);
+    gap: 20px;
+    align-items: start;
 }
 
-
-
-
-
-/* ================================= */
 /* AÇÕES */
-/* ================================= */
 
-
-.acoes{
-
-
-    background:#181818;
-
-
-    border:2px solid #444;
-
-
-    border-radius:15px;
-
-
-    padding:20px;
-
-
+.acoes {
+    min-width: 0;
+    padding: 20px;
+    background: linear-gradient(145deg, #191b24, #101117);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
 }
 
-
-
-.acoes button{
-
-    padding:10px;
-
-    font-size:15px;
-
+.acoes button {
+    padding: 11px;
+    font-size: 14px;
 }
 
-
-
-.acoes p{
-
-    color:#ccc;
-
-    font-size:14px;
-
+.acoes p {
+    color: var(--texto-suave);
+    font-size: 13px;
 }
 
+/* TERMINAL DE COMBATE */
 
-
-
-
-/* ================================= */
-/* TERMINAL */
-/* ================================= */
-
-
-.terminal{
-
-
-    background:#080808;
-
-
-    border:2px sólida #444;
-
-
-    border-radius:15px;
-
-
-    padding:20px;
-
-
+.terminal {
+    min-width: 0;
+    padding: 20px;
+    background: #090a0f;
+    border: 1px solid #343744;
+    border-radius: 14px;
+    box-shadow: inset 0 0 25px #0005;
 }
 
-
-
-#mensagens{
-
-
-    height:550px;
-
-
-    overflow-y:auto;
-
-
-    font-size:18px;
-
-
-    line-height:1.8;
-
-
+#mensagens {
+    height: 420px;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    padding: 14px;
+    color: #d8dbe5;
+    font-size: 15px;
+    line-height: 1.8;
+    scrollbar-width: thin;
+    scrollbar-color: #57505a #101117;
 }
 
+#mensagens::-webkit-scrollbar {
+    width: 7px;
+}
 
+#mensagens::-webkit-scrollbar-track {
+    background: #101117;
+}
 
+#mensagens::-webkit-scrollbar-thumb {
+    background: #57505a;
+    border-radius: 10px;
+}
 
-
-/* ================================= */
 /* ANIMAÇÕES */
-/* ================================= */
 
-
-@keyframes critico{
-
-
-    50%{
-
-        transform:scale(1.08);
-
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
+@keyframes critico {
+    50% {
+        transform: scale(1.05);
+        filter: brightness(1.5);
+    }
+}
+
+.critico {
+    animation: critico .35s ease;
+}
+
+@keyframes tremer {
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+.tremer {
+    animation: tremer .35s ease;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 900px) {
+    .status {
+        gap: 14px;
+    }
+
+    .batalha {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #mensagens {
+        height: 320px;
+    }
+}
+
+@media (max-width: 600px) {
+    .tela {
+        padding: 16px;
+    }
+
+    #jogo {
+        padding: 12px;
+    }
+
+    .status {
+        flex-direction: column;
+        margin: 18px 0;
+    }
+
+    .personagem,
+    .acoes,
+    .terminal {
+        padding: 15px;
+    }
+
+    .painel-menu,
+    .painel-historia {
+        padding: 24px 18px;
+        border-radius: 14px;
+    }
+
+    #mensagens {
+        height: 280px;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    button {
+        padding: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* =========================================
+   HISTÓRICO DE COMBATE EM ORDEM REVERSA
+========================================= */
+
+#mensagens {
+    height: 280px;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+
+    display: flex;
+    flex-direction: column-reverse;
+
+    padding: 10px 14px;
+    color: #d8dbe5;
+    font-size: 14px;
+    line-height: 1.5;
+
+    scrollbar-width: thin;
+    scrollbar-color: #57505a #101117;
+}
+
+/* =========================================
+   AJUSTE PARA CABER MELHOR NA TELA
+========================================= */
+
+@media (min-width: 901px) {
+    .tela {
+        padding: 12px;
+    }
+
+    #jogo {
+        padding: 12px 20px;
+    }
+
+    h1 {
+        margin-bottom: 12px;
+    }
+
+    .status {
+        gap: 14px;
+        margin: 12px 0;
+    }
+
+    .personagem {
+        padding: 14px;
+    }
+
+    .batalha {
+        gap: 14px;
+    }
+
+    .acoes,
+    .terminal {
+        padding: 14px;
+    }
+
+    .acoes button {
+        margin-top: 6px;
+        padding: 9px;
+    }
+}
+
+/* =========================================
+   BATALHA — MELHOR APROVEITAMENTO DO ESPAÇO
+========================================= */
+
+@media (min-width: 901px) {
+    /* Reduz os espaços externos */
+    #jogo {
+        max-width: 1600px;
+        padding: 8px 16px;
+    }
+
+    /* Painéis dos personagens mais compactos */
+    .status {
+        gap: 12px;
+        margin: 8px 0 12px;
+    }
+
+    .personagem {
+        padding: 12px 16px;
+    }
+
+    .personagem h2 {
+        margin-bottom: 8px;
+    }
+
+    .personagem p {
+        margin: 5px 0;
+        line-height: 1.4;
+    }
+
+    .barraVida,
+    .barraEnergia {
+        height: 12px;
+        margin: 6px 0 8px;
+    }
+
+    .efeitos {
+        gap: 5px;
+        margin-top: 8px;
+    }
+
+    .efeito {
+        padding: 4px 8px;
+    }
+
+    /* Dá mais espaço para as ações e para o terminal */
+    .batalha {
+        grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.6fr);
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .acoes,
+    .terminal {
+        padding: 12px;
+    }
+
+    .acoes h2,
+    .terminal h2 {
+        margin-bottom: 8px;
+    }
+
+    .acoes button {
+        margin-top: 6px;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .acoes p {
+        margin: 5px 0;
+        line-height: 1.4;
+    }
+
+    /* Histórico mais baixo e compacto */
+    #mensagens {
+        height: 240px;
+        padding: 8px 10px;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    #mensagens p {
+        margin: 4px 0;
+    }
+}
+
+/* =========================================
+   BATALHA — AJUSTADA PARA CABER NA TELA
+========================================= */
+
+@media (min-width: 901px) {
+
+    /* Reduz os espaços gerais */
+    #jogo {
+        max-width: 1600px;
+        padding: 4px 12px;
+    }
+
+    /* Título e indicação do turno */
+    #jogo h1 {
+        font-size: 34px;
+        line-height: 1.1;
+        margin-bottom: 6px;
+        letter-spacing: 2px;
+    }
+
+    #jogo > p {
+        margin: 4px 0 10px;
+        font-size: 18px;
+    }
+
+    /* Painéis dos personagens */
+    .status {
+        gap: 12px;
+        margin: 8px 0 12px;
+    }
+
+    .personagem {
+        padding: 10px 14px;
+    }
+
+    .personagem h2 {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+
+    .personagem p {
+        margin: 3px 0;
+        line-height: 1.3;
+        font-size: 14px;
+    }
+
+    .barraVida,
+    .barraEnergia {
+        height: 10px;
+        margin: 4px 0 6px;
+    }
+
+    .efeitos {
+        gap: 4px;
+        margin-top: 5px;
+    }
+
+    .efeito {
+        padding: 3px 7px;
+        font-size: 11px;
+    }
+
+    /* Ações e histórico lado a lado */
+    .batalha {
+        grid-template-columns: minmax(290px, 0.8fr)
+                               minmax(0, 1.4fr);
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .acoes,
+    .terminal {
+        min-height: 0;
+        padding: 10px;
+    }
+
+    .acoes h2,
+    .terminal h2 {
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+
+    /* Lista de ações com rolagem própria */
+    .acoes {
+        max-height: 340px;
+        overflow-y: auto;
+    }
+
+    .acoes button {
+        margin-top: 5px;
+        padding: 7px 8px;
+        font-size: 12px;
+    }
+
+    .acoes p {
+        margin: 3px 0;
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    /* Histórico de combate */
+    #mensagens {
+        height: 275px;
+        padding: 6px 8px;
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    #mensagens p {
+        margin: 3px 0;
+    }
 }
 
 
+/* =========================================
+   AÇÕES SEM ROLAGEM — DUAS COLUNAS
+========================================= */
 
-.critico{
+@media (min-width: 901px) {
+    .batalha {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+    }
 
-    animation:critico .35s;
+    .acoes {
+        max-height: none;
+        overflow-y: visible;
+    }
 
+    .acoes button {
+        font-size: 12px;
+        padding: 7px 5px;
+    }
+
+    .acoes p {
+        font-size: 11px;
+        line-height: 1.25;
+    }
 }
 
 
+/* =========================================
+   CORRIGIR LAYOUT DA BATALHA
+========================================= */
 
-
-
-@keyframes tremer{
-
-
-    20%{
-
-        transform:translateX(-6px);
-
+@media (min-width: 901px) {
+    /* Impede que o jogo ultrapasse a largura da tela */
+    #jogo {
+        width: 100%;
+        max-width: none;
+        padding: 8px 16px;
+        margin: 0;
     }
 
-
-    40%{
-
-        transform:translateX(6px);
-
+    /* Personagens ocupam toda a largura */
+    .status {
+        display: flex;
+        width: 100%;
+        gap: 12px;
+        margin: 8px 0 12px;
     }
 
-
-    60%{
-
-        transform:translateX(-5px);
-
+    .personagem {
+        flex: 1;
+        min-width: 0;
     }
 
-
-    80%{
-
-        transform:translateX(5px);
-
+    /* Ações e histórico ocupam a parte inferior */
+    .batalha {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+        width: 100%;
+        margin: 0;
+        align-items: start;
     }
 
+    /* Remove o posicionamento que deixa espaço vazio */
+    .acoes {
+        width: 100%;
+        max-height: none;
+        overflow: visible;
+        min-width: 0;
+    }
 
+    .terminal {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Compacta os ataques para aproveitar o painel */
+    .acoes button {
+        margin-top: 5px;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .acoes p {
+        margin: 3px 0;
+        font-size: 12px;
+        line-height: 1.3;
+    }
+}
+
+/* =========================================
+   AÇÕES MAIS COMPACTAS
+========================================= */
+
+@media (min-width: 901px) {
+    .acoes {
+        padding: 8px;
+        min-width: 0;
+    }
+
+    .acoes h2 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .acoes button {
+        padding: 5px 7px;
+        margin-top: 3px;
+        font-size: 11px;
+        line-height: 1.2;
+    }
+
+    .acoes p {
+        margin: 2px 0;
+        font-size: 10px;
+        line-height: 1.15;
+    }
 }
 
 
+/* =========================================
+   AÇÕES COMPACTAS — LETRAS UM POUCO MAIORES
+========================================= */
 
-.tremer{
+@media (min-width: 901px) {
+    .acoes {
+        padding: 8px;
+        min-width: 0;
+    }
 
-    animation:tremer .35s;
+    .acoes h2 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
 
+    .acoes button {
+        padding: 6px 7px;
+        margin-top: 3px;
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    .acoes p {
+        margin: 2px 0;
+        font-size: 11px;
+        line-height: 1.2;
+    }
 }
 
 
+/* =========================================
+   AÇÕES COMPACTAS — LETRAS MAIORES
+========================================= */
 
-
-
-/* ================================= */
-/* RESPONSIVO */
-/* ================================= */
-
-
-@media(max-width:900px){
-
-
-    .status{
-
-        flex-direction:column;
-
+@media (min-width: 901px) {
+    .acoes {
+        padding: 8px;
+        min-width: 0;
     }
 
-
-    .batalha{
-
-        grid-template-columns:1fr;
-
+    .acoes h2 {
+        font-size: 21px;
+        margin-bottom: 6px;
     }
 
-
-
-    h1{
-
-        font-size:32px;
-
+    .acoes button {
+        padding: 7px;
+        margin-top: 4px;
+        font-size: 13px;
+        line-height: 1.2;
     }
 
+    .acoes p {
+        margin: 3px 0;
+        font-size: 12px;
+        line-height: 1.2;
+    }
+}
 
 
-    #mensagens{
+/* =========================================
+   MENSAGENS DA BATALHA — LETRAS MAIORES
+========================================= */
 
-        height:350px;
-
-        font-size:15px;
-
+@media (min-width: 901px) {
+    #mensagens {
+        font-size: 14px;
+        line-height: 1.5;
     }
 
+    #mensagens p {
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 4px 0;
+    }
+}
 
+
+/* HISTÓRIA E SINOPSE AJUSTADAS À TELA */
+
+#historia {
+    height: 100vh;
+    height: 100dvh;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+}
+
+#historia .painel-historia {
+    width: 100%;
+    max-width: 850px;
+    max-height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 16px;
+}
+
+#textoHistoria {
+    width: 100%;
+    max-height: calc(100dvh - 80px);
+    overflow: hidden;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#textoHistoria p {
+    margin: 6px 0;
+    font-size: clamp(12px, 1.8vh, 17px);
+    line-height: 1.25;
+}
+
+#textoHistoria hr {
+    margin: 8px auto;
+    width: 60%;
 }
